@@ -120,6 +120,7 @@ function renderFoods() {
     html += '<td class="val">' + f.protPerDollar + 'g</td>';
     html += '<td class="val">' + (f.nutritionScore || "\u2014") + '</td>';
     html += '<td class="val">' + (f.costPerYear ? "$" + f.costPerYear.toLocaleString() : "\u2014") + '</td>';
+    html += '<td><button onclick="event.stopPropagation();addFoodToGrocery(' + f.id + ')" style="background:var(--accent);color:#fff;border:none;padding:0.25rem 0.5rem;border-radius:4px;cursor:pointer;font-size:0.75rem;font-weight:700">🛒</button></td>';
     html += '</tr>';
     var isOpen = expandedFood === f.id;
     html += '<tr class="expand-row ' + (isOpen ? "open" : "") + '"><td colspan="7"><div class="expand-content">';
@@ -195,7 +196,7 @@ function renderRecipes() {
       var t = r.tags[j];
       if (displayTags.indexOf(t) >= 0) tagH += '<span class="tag ' + t + '">' + (tagLabels[t] || t) + '</span>';
     }
-    h += '<div class="recipe-card" onclick="showRecipe(' + r.id + ')"><div class="recipe-title">' + esc(r.name) + '</div><div class="recipe-tags">' + tagH + '</div><div style="font-size:0.85rem;color:var(--text-light)">' + r.time + ' \u00B7 ' + r.servings + ' servings \u00B7 <span style="color:var(--accent);font-weight:700">~$' + r.cost.toFixed(2) + '</span></div></div>';
+    h += '<div class="recipe-card"><div onclick="showRecipe(' + r.id + ')" style="cursor:pointer"><div class="recipe-title">' + esc(r.name) + '</div><div class="recipe-tags">' + tagH + '</div><div style="font-size:0.85rem;color:var(--text-light)">' + r.time + ' \u00B7 ' + r.servings + ' servings \u00B7 <span style="color:var(--accent);font-weight:700">~$' + r.cost.toFixed(2) + '</span></div></div><button onclick="addRecipeToGrocery(' + r.id + ')" style="margin-top:0.5rem;background:var(--accent);color:#fff;border:none;padding:0.35rem 0.8rem;border-radius:4px;cursor:pointer;font-size:0.8rem;font-weight:700;font-family:inherit">🛒 Add Ingredients</button></div>';
   }
   if (currentFilter === "all" || currentFilter === "chicken") {
     h += '<div style="grid-column:1/-1;margin-top:1.5rem"><h3 style="color:var(--text-dark)">\uD83D\uDCA1 32+ Chicken Replacement Ideas</h3><div style="display:flex;flex-wrap:wrap;gap:0.5rem;margin-top:0.75rem">';
@@ -356,4 +357,177 @@ function setupEvents() {
 
 
 
+// === GROCERY LIST ===
+var groceryList = JSON.parse(localStorage.getItem("eieGrocery") || "[]");
+
+function addToGrocery(item, price, category) {
+  groceryList.push({item:item, price:price||0, category:category||"other", qty:1});
+  saveGrocery();
+  renderGrocery();
+  // flash the grocery tab
+  var btn = document.querySelector('[data-tab="grocery"]');
+  if (btn) { btn.style.background = "var(--accent)"; btn.style.color = "#fff"; setTimeout(function(){ btn.style.background = ""; btn.style.color = ""; }, 800); }
+}
+
+function addFoodToGrocery(id) {
+  var f = null;
+  for (var i = 0; i < FOODS.length; i++) { if (FOODS[i].id === id) { f = FOODS[i]; break; } }
+  if (!f) return;
+  var cat = "pantry";
+  var n = f.name.toLowerCase();
+  if (n.match(/chicken|beef|pork|turkey|salmon|tilapia|tuna|sausage|bacon|jerky|mackerel|pollock/)) cat = "protein";
+  else if (n.match(/milk|cheese|yogurt|cream|butter|egg/)) cat = "dairy";
+  else if (n.match(/lettuce|kale|carrot|spinach|potato|squash|tomato|pepper|onion|bean|pea|corn|broccoli|cabbage|celery|radish|artichoke|asparagus|garlic|ginger|parsley|cilantro/)) cat = "produce";
+  else if (n.match(/banana|apple|orange|grape|berry|melon|mango|pear|peach|plum|pineapple|grapefruit|lime|lemon/)) cat = "produce";
+  addToGrocery(f.name, f.price || 0, cat);
+}
+
+function addRecipeToGrocery(id) {
+  var r = null;
+  for (var i = 0; i < RECIPES.length; i++) { if (RECIPES[i].id === id) { r = RECIPES[i]; break; } }
+  if (!r) return;
+  for (var j = 0; j < r.ingredients.length; j++) {
+    addToGrocery(r.ingredients[j], 0, "recipe");
+  }
+}
+
+function removeGroceryItem(idx) {
+  groceryList.splice(idx, 1);
+  saveGrocery();
+  renderGrocery();
+}
+
+function saveGrocery() {
+  localStorage.setItem("eieGrocery", JSON.stringify(groceryList));
+}
+
+function renderGrocery() {
+  var cats = {produce:[], protein:[], dairy:[], pantry:[], recipe:[], other:[]};
+  var catLabels = {produce:"🥕 Produce", protein:"🥩 Protein", dairy:"🥛 Dairy", pantry:"🏪 Pantry", recipe:"📋 Recipe Ingredients", other:"📦 Other"};
+  var total = 0;
+  for (var i = 0; i < groceryList.length; i++) {
+    var g = groceryList[i];
+    var c = cats[g.category] ? g.category : "other";
+    cats[c].push({item:g.item, price:g.price, idx:i});
+    total += g.price || 0;
+  }
+  var h = "";
+  var catOrder = ["produce","protein","dairy","pantry","recipe","other"];
+  for (var k = 0; k < catOrder.length; k++) {
+    var key = catOrder[k];
+    if (cats[key].length === 0) continue;
+    h += '<div style="margin-bottom:1rem"><h3 style="color:var(--accent);font-size:0.9rem;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:0.5rem">' + catLabels[key] + ' (' + cats[key].length + ')</h3>';
+    for (var m = 0; m < cats[key].length; m++) {
+      var it = cats[key][m];
+      h += '<div style="display:flex;justify-content:space-between;align-items:center;padding:0.4rem 0;border-bottom:1px solid var(--border);font-size:0.9rem">';
+      h += '<span>' + esc(it.item) + '</span>';
+      h += '<div style="display:flex;gap:0.5rem;align-items:center">';
+      if (it.price > 0) h += '<span style="color:var(--accent);font-weight:600">$' + it.price.toFixed(2) + '</span>';
+      h += '<button onclick="removeGroceryItem(' + it.idx + ')" style="background:none;border:none;color:var(--red);cursor:pointer;font-size:1rem;padding:0 0.3rem">✕</button>';
+      h += '</div></div>';
+    }
+    h += '</div>';
+  }
+  if (groceryList.length === 0) {
+    h = '<div style="text-align:center;padding:3rem;color:var(--text-light)"><div style="font-size:3rem;margin-bottom:1rem">🛒</div><p>Your grocery list is empty.</p><p style="font-size:0.85rem;margin-top:0.5rem">Add items from Rankings, Recipes, or the Meal Builder!</p></div>';
+  }
+  var el = document.getElementById("groceryCats");
+  if (el) el.innerHTML = h;
+  var tot = document.getElementById("groceryTotal");
+  if (tot) tot.textContent = "Est. Total: $" + total.toFixed(2) + (total === 0 && groceryList.length > 0 ? " (recipe items — price varies)" : "");
+}
+
+function copyGrocery() {
+  var text = "EIE Grocery List\n================\n";
+  for (var i = 0; i < groceryList.length; i++) {
+    text += "☐ " + groceryList[i].item + (groceryList[i].price > 0 ? " ($" + groceryList[i].price.toFixed(2) + ")" : "") + "\n";
+  }
+  navigator.clipboard.writeText(text).then(function(){ alert("Grocery list copied to clipboard!"); });
+}
+
+function clearGrocery() {
+  if (groceryList.length === 0) return;
+  groceryList = [];
+  saveGrocery();
+  renderGrocery();
+}
+
+// === MEAL BUILDER ===
+var mealParts = {
+  proteins: [{name:"Chicken Breast",cost:1.99,cal:165,prot:31},{name:"Ground Beef",cost:3.19,cal:250,prot:17},{name:"Pork Loin",cost:1.99,cal:143,prot:26},{name:"Pinto Beans",cost:0.50,cal:245,prot:15},{name:"Lentils",cost:0.77,cal:230,prot:18},{name:"Eggs (4)",cost:0.48,cal:312,prot:24}],
+  carbs: [{name:"Rice (2 cups)",cost:0.50,cal:412,prot:8},{name:"Noodles",cost:0.50,cal:400,prot:14},{name:"Potatoes (2)",cost:0.70,cal:320,prot:8},{name:"Bread (4 slices)",cost:0.40,cal:320,prot:12},{name:"Tortillas (4)",cost:0.60,cal:520,prot:12}],
+  veggies: [{name:"Broccoli",cost:0.98,cal:55,prot:4},{name:"Carrots",cost:0.50,cal:52,prot:1},{name:"Green Beans",cost:0.98,cal:31,prot:2},{name:"Corn",cost:0.50,cal:96,prot:3},{name:"Frozen Mixed Veggies",cost:0.98,cal:65,prot:3}],
+  flavors: [{name:"Teriyaki Sauce",cost:0.30},{name:"Alfredo Sauce",cost:0.75},{name:"BBQ Sauce",cost:0.25},{name:"Fajita Seasoning",cost:0.15},{name:"Italian Seasoning",cost:0.10},{name:"Soy Sauce + Ginger",cost:0.20}]
+};
+
+function renderMealBuilder() {
+  var el = document.getElementById("mealBuilder");
+  if (!el) return;
+  var h = '<h3 style="color:var(--text-dark);margin-bottom:1rem">🔧 Build Your Own Meal</h3>';
+  h += '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;margin-bottom:1.5rem">';
+  // Protein
+  h += '<div class="control-group"><label style="font-weight:700;margin-bottom:0.5rem;display:block">🥩 Protein</label><select id="mbProtein" onchange="updateMealBuilder()" style="width:100%;padding:0.5rem;border:2px solid var(--border);border-radius:4px;font-family:inherit">';
+  for (var i = 0; i < mealParts.proteins.length; i++) h += '<option value="' + i + '">' + mealParts.proteins[i].name + '</option>';
+  h += '</select></div>';
+  // Carb
+  h += '<div class="control-group"><label style="font-weight:700;margin-bottom:0.5rem;display:block">🍚 Carb</label><select id="mbCarb" onchange="updateMealBuilder()" style="width:100%;padding:0.5rem;border:2px solid var(--border);border-radius:4px;font-family:inherit">';
+  for (var i = 0; i < mealParts.carbs.length; i++) h += '<option value="' + i + '">' + mealParts.carbs[i].name + '</option>';
+  h += '</select></div>';
+  // Veggie
+  h += '<div class="control-group"><label style="font-weight:700;margin-bottom:0.5rem;display:block">🥦 Veggie</label><select id="mbVeg" onchange="updateMealBuilder()" style="width:100%;padding:0.5rem;border:2px solid var(--border);border-radius:4px;font-family:inherit">';
+  for (var i = 0; i < mealParts.veggies.length; i++) h += '<option value="' + i + '">' + mealParts.veggies[i].name + '</option>';
+  h += '</select></div>';
+  // Flavor
+  h += '<div class="control-group"><label style="font-weight:700;margin-bottom:0.5rem;display:block">🌶️ Flavor</label><select id="mbFlavor" onchange="updateMealBuilder()" style="width:100%;padding:0.5rem;border:2px solid var(--border);border-radius:4px;font-family:inherit">';
+  for (var i = 0; i < mealParts.flavors.length; i++) h += '<option value="' + i + '">' + mealParts.flavors[i].name + '</option>';
+  h += '</select></div>';
+  h += '</div>';
+  h += '<div id="mbResult" style="background:var(--bg2);border-radius:8px;padding:1.25rem;border:1px solid var(--border)"></div>';
+  el.innerHTML = h;
+  updateMealBuilder();
+}
+
+function updateMealBuilder() {
+  var pi = parseInt(document.getElementById("mbProtein").value);
+  var ci = parseInt(document.getElementById("mbCarb").value);
+  var vi = parseInt(document.getElementById("mbVeg").value);
+  var fi = parseInt(document.getElementById("mbFlavor").value);
+  var p = mealParts.proteins[pi], c = mealParts.carbs[ci], v = mealParts.veggies[vi], f = mealParts.flavors[fi];
+  var cost = (p.cost + c.cost + v.cost + f.cost).toFixed(2);
+  var cal = p.cal + c.cal + v.cal;
+  var prot = p.prot + c.prot + v.prot;
+  var mealName = f.name.replace(/ Sauce| Seasoning/g,"") + " " + p.name.replace(/ \(.+/,"") + " with " + c.name.replace(/ \(.+/,"") + " & " + v.name;
+  var searchQ = encodeURIComponent(p.name.replace(/ \(.+/,"") + " " + c.name.replace(/ \(.+/,"") + " " + v.name + " " + f.name.replace(/ Sauce| Seasoning/g,"") + " recipe");
+  var h = '<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;margin-bottom:1rem">';
+  h += '<div><div style="font-size:1.2rem;font-weight:700;color:var(--text-dark)">' + esc(mealName) + '</div><div style="font-size:0.85rem;color:var(--text-light)">Your custom EIE meal</div></div>';
+  h += '</div>';
+  h += '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:0.75rem;margin-bottom:1rem">';
+  h += '<div style="text-align:center;background:var(--white);padding:0.75rem;border-radius:6px;border:1px solid var(--border)"><div style="font-size:1.4rem;font-weight:700;color:var(--accent)">$' + cost + '</div><div style="font-size:0.7rem;color:var(--text-light);text-transform:uppercase">Est. Cost</div></div>';
+  h += '<div style="text-align:center;background:var(--white);padding:0.75rem;border-radius:6px;border:1px solid var(--border)"><div style="font-size:1.4rem;font-weight:700;color:var(--accent-blue)">' + cal + '</div><div style="font-size:0.7rem;color:var(--text-light);text-transform:uppercase">Calories</div></div>';
+  h += '<div style="text-align:center;background:var(--white);padding:0.75rem;border-radius:6px;border:1px solid var(--border)"><div style="font-size:1.4rem;font-weight:700;color:var(--orange)">' + prot + 'g</div><div style="font-size:0.7rem;color:var(--text-light);text-transform:uppercase">Protein</div></div>';
+  h += '</div>';
+  h += '<div style="display:flex;gap:0.75rem;flex-wrap:wrap">';
+  h += '<a href="https://www.google.com/search?q=' + searchQ + '" target="_blank" style="flex:1;display:inline-block;text-align:center;background:var(--accent);color:#fff;padding:0.7rem 1.5rem;border-radius:6px;text-decoration:none;font-weight:700;font-size:0.9rem;text-transform:uppercase">🔍 Search Recipes Online</a>';
+  h += '<button onclick="addMealToGrocery()" style="flex:1;background:var(--accent-blue);color:#fff;border:none;padding:0.7rem 1.5rem;border-radius:6px;font-weight:700;font-size:0.9rem;font-family:inherit;cursor:pointer;text-transform:uppercase">🛒 Add to Grocery List</button>';
+  h += '</div>';
+  document.getElementById("mbResult").innerHTML = h;
+}
+
+function addMealToGrocery() {
+  var pi = parseInt(document.getElementById("mbProtein").value);
+  var ci = parseInt(document.getElementById("mbCarb").value);
+  var vi = parseInt(document.getElementById("mbVeg").value);
+  var fi = parseInt(document.getElementById("mbFlavor").value);
+  addToGrocery(mealParts.proteins[pi].name, mealParts.proteins[pi].cost, "protein");
+  addToGrocery(mealParts.carbs[ci].name, mealParts.carbs[ci].cost, "pantry");
+  addToGrocery(mealParts.veggies[vi].name, mealParts.veggies[vi].cost, "produce");
+  addToGrocery(mealParts.flavors[fi].name, mealParts.flavors[fi].cost, "pantry");
+}
+
 init();
+renderGrocery();
+renderMealBuilder();
+
+// Wire up grocery buttons
+document.getElementById("clearGrocery").addEventListener("click", clearGrocery);
+document.getElementById("copyGrocery").addEventListener("click", copyGrocery);
