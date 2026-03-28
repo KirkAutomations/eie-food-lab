@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EIE Food Lab — Efficiency Is Everything</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Narrow:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>:root{--bg:#ffffff;--bg2:#fafafa;--bg3:#f0f0f0;--accent:#33cd66;--accent-dark:#2ab557;--accent-light:#e8f9ee;--accent-blue:#0d47a1;--text:#5b5753;--text-dark:#1a1a1a;--text-light:#9c9d9b;--border:#e5e5e5;--white:#fff;--green:#33cd66;--yellow:#cc7a00;--orange:#e85d04;--red:#ff3131;--row-alt:#fffef0}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:'Archivo Narrow',sans-serif;line-height:1.6;min-height:100vh}
+body.dark{--bg:#1a1a2e;--bg2:#16213e;--bg3:#0f3460;--text:#e0e0e0;--text-dark:#fff;--text-light:#888;--border:#2a2a4a;--accent-light:rgba(51,205,102,0.1);--row-alt:rgba(255,255,255,0.02);--white:#16213e}
+.nav{background:var(--white);border-bottom:2px solid var(--accent);position:sticky;top:0;z-index:100;padding:0 1rem;box-shadow:0 1px 3px rgba(0,0,0,0.06)}
+.nav-inner{max-width:1400px;margin:0 auto;display:flex;align-items:center;gap:0;overflow-x:auto;scrollbar-width:none}
+.nav-inner::-webkit-scrollbar{display:none}
+.nav-brand{font-weight:700;font-size:1.1rem;color:var(--text-dark);white-space:nowrap;padding:0.75rem 1.5rem 0.75rem 0;letter-spacing:0.5px;text-transform:uppercase}
+.nav-brand span{color:var(--accent)}
+.nav-btn{background:none;border:none;color:var(--text);padding:0.75rem 1.2rem;cursor:pointer;font-size:0.9rem;font-family:inherit;white-space:nowrap;border-bottom:3px solid transparent;transition:all 0.2s;font-weight:500;text-transform:uppercase;letter-spacing:0.5px}
+.nav-btn:hover{color:var(--accent);background:var(--accent-light)}
+.nav-btn.active{color:var(--accent);border-bottom-color:var(--accent);font-weight:700}
+.nav-right{margin-left:auto;display:flex;gap:0.5rem;align-items:center}
+.theme-toggle{background:var(--bg3);border:1px solid var(--border);color:var(--text);padding:0.35rem 0.7rem;border-radius:4px;cursor:pointer;font-size:0.75rem;font-family:inherit}
+.section{display:none;max-width:1400px;margin:0 auto;padding:1.5rem 1rem}
+.section.active{display:block}
+h2{color:var(--text-dark);font-size:1.5rem;margin-bottom:1rem;font-weight:700;text-transform:uppercase;letter-spacing:0.5px}
+h2 span{color:var(--accent)}
+h3{color:var(--text-dark);font-size:1.1rem;margin-bottom:0.5rem}
+.hero-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;margin-bottom:1.5rem}
+.stat-card{background:var(--white);border-radius:8px;padding:1.25rem;border:1px solid var(--border);text-align:center}
+.stat-card .num{font-size:1.8rem;font-weight:700;color:var(--accent)}
+.stat-card .label{font-size:0.8rem;color:var(--text-light);text-transform:uppercase;letter-spacing:0.5px}
+.search-bar{display:flex;gap:0.75rem;margin-bottom:1rem;flex-wrap:wrap;align-items:center}
+.search-bar input{background:var(--white);border:2px solid var(--border);color:var(--text-dark);padding:0.6rem 1rem;border-radius:6px;font-size:0.95rem;font-family:inherit;flex:1;min-width:200px;transition:border 0.2s}
+.search-bar input:focus{outline:none;border-color:var(--accent)}
+.sort-btns{display:flex;gap:0.4rem;flex-wrap:wrap}
+.sort-btn{background:var(--white);border:2px solid var(--border);color:var(--text);padding:0.45rem 0.9rem;border-radius:4px;cursor:pointer;font-size:0.8rem;font-family:inherit;font-weight:600;white-space:nowrap;transition:all 0.2s;text-transform:uppercase;letter-spacing:0.3px}
+.sort-btn:hover{border-color:var(--accent);color:var(--accent)}
+.sort-btn.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.food-table{width:100%;border-collapse:collapse;font-size:0.9rem}
+.food-table th{background:var(--bg2);color:var(--text-dark);padding:0.65rem 0.75rem;text-align:left;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.5px;cursor:pointer;white-space:nowrap;position:sticky;top:46px;z-index:10;border-bottom:2px solid var(--accent);font-weight:700;user-select:none}
+.food-table th:hover{color:var(--accent)}
+.food-table td{padding:0.55rem 0.75rem;border-bottom:1px solid var(--border)}
+.food-table tbody tr{cursor:pointer;transition:background 0.1s}
+.food-table tbody tr:nth-child(4n+1),.food-table tbody tr:nth-child(4n+2){background:var(--row-alt)}
+.food-table tbody tr:hover{background:var(--accent-light)}
+.food-table .rank-cell{font-weight:700;width:45px;text-align:center;font-size:0.85rem}
+.food-table .name-cell{font-weight:600;color:var(--text-dark)}
+.food-table .val{font-weight:600}
+.tier-1 .rank-cell{color:var(--green)}.tier-2 .rank-cell{color:var(--yellow)}.tier-3 .rank-cell{color:var(--orange)}.tier-4 .rank-cell{color:var(--text-light)}
+.expand-row{display:none}
+.expand-row.open{display:table-row}
+.expand-row td{padding:0;border:none}
+.expand-content{padding:1.25rem;background:var(--bg2);border:1px solid var(--border);border-radius:0 0 8px 8px;margin:0 0.5rem 0.5rem}
+.bar-chart{display:grid;gap:0.35rem;margin-top:0.75rem}
+.bar-row{display:flex;align-items:center;gap:0.5rem}
+.bar-label{width:80px;font-size:0.75rem;color:var(--text-light);text-align:right;flex-shrink:0;font-weight:600}
+.bar-track{flex:1;height:20px;background:var(--bg3);border-radius:3px;overflow:hidden}
+.bar-fill{height:100%;border-radius:3px;transition:width 0.5s;display:flex;align-items:center;padding-left:6px;font-size:0.7rem;color:#fff;font-weight:700}
+.bar-fill.cal{background:var(--accent)}.bar-fill.prot{background:var(--accent-blue)}.bar-fill.fib{background:var(--yellow)}
+.bar-fill.iron{background:var(--orange)}.bar-fill.vitc{background:var(--red)}.bar-fill.vita{background:#7c3aed}.bar-fill.calc{background:#0891b2}
+.week-tabs{display:flex;gap:0.5rem;margin-bottom:1rem;flex-wrap:wrap}
+.week-tab{background:var(--white);border:2px solid var(--border);color:var(--text);padding:0.5rem 1.2rem;border-radius:6px;cursor:pointer;font-size:0.85rem;font-family:inherit;font-weight:600;text-transform:uppercase;letter-spacing:0.3px}
+.week-tab:hover{border-color:var(--accent)}
+.week-tab.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.week-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1rem}
+.day-card{background:var(--white);border-radius:8px;padding:1.25rem;border:1px solid var(--border);transition:all 0.2s;cursor:pointer}
+.day-card:hover{border-color:var(--accent);transform:translateY(-2px);box-shadow:0 4px 12px rgba(51,205,102,0.1)}
+.day-card .day-name{font-size:0.75rem;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:0.4rem;font-weight:700}
+.day-card .meal-name{font-weight:700;font-size:1.05rem;color:var(--text-dark);margin-bottom:0.3rem}
+.day-card .meal-meta{font-size:0.8rem;color:var(--text-light)}
+.day-card .meal-cost{color:var(--accent);font-weight:700;font-size:0.9rem}
+.recipe-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1rem}
+.recipe-card{background:var(--white);border-radius:8px;padding:1.25rem;border:1px solid var(--border);cursor:pointer;transition:all 0.2s}
+.recipe-card:hover{border-color:var(--accent);transform:translateY(-2px);box-shadow:0 4px 12px rgba(51,205,102,0.1)}
+.recipe-card .recipe-title{font-weight:700;font-size:1.05rem;color:var(--text-dark);margin-bottom:0.5rem}
+.recipe-card .recipe-tags{display:flex;gap:0.4rem;flex-wrap:wrap;margin-bottom:0.5rem}
+.tag{font-size:0.7rem;padding:0.2rem 0.55rem;border-radius:3px;font-weight:600;text-transform:uppercase;letter-spacing:0.3px}
+.tag.chicken{background:#fff3e0;color:#e65100}.tag.beef{background:#ffebee;color:#c62828}.tag.pork{background:#f3e5f5;color:#6a1b9a}
+.tag.veg{background:#e8f5e9;color:#2e7d32}.tag.vegan{background:#c8e6c9;color:#1b5e20}.tag.slow{background:#e3f2fd;color:#1565c0}.tag.fast{background:#fff8e1;color:#f57f17}.tag.budget{background:#e8f9ee;color:#1b7a3a}
+.tag.glutenfree{background:#fce4ec;color:#880e4f}.tag.dairyfree{background:#e0f2f1;color:#004d40}.tag.mealprep{background:#e8eaf6;color:#283593}.tag.kidfriendly{background:#fff3e0;color:#e65100}.tag.highprotein{background:#efebe9;color:#4e342e}.tag.under30{background:#f3e5f5;color:#4a148c}.tag.under3{background:#e8f5e9;color:#1b5e20}
+.modal-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:200;justify-content:center;align-items:start;padding:2rem;overflow-y:auto}
+.modal-overlay.open{display:flex}
+.modal{background:var(--white);border-radius:12px;max-width:700px;width:100%;padding:2rem;position:relative;border:2px solid var(--accent);box-shadow:0 20px 40px rgba(0,0,0,0.15)}
+.modal-close{position:absolute;top:1rem;right:1rem;background:none;border:none;color:var(--text-light);font-size:1.5rem;cursor:pointer}
+.modal-close:hover{color:var(--red)}
+.modal h3{color:var(--accent);margin-bottom:0.75rem;text-transform:uppercase;letter-spacing:0.3px}
+.modal .ingredients{list-style:none;margin-bottom:1.25rem}
+.modal .ingredients li{padding:0.35rem 0;border-bottom:1px solid var(--border);font-size:0.9rem}
+.modal .ingredients li::before{content:"▸";color:var(--accent);margin-right:0.5rem;font-weight:700}
+.modal .directions{color:var(--text);font-size:0.9rem;line-height:1.8}
+.modal .directions p{margin-bottom:0.4rem}
+.budget-controls{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:1.5rem;margin-bottom:2rem}
+.control-group{background:var(--white);padding:1.25rem;border-radius:8px;border:1px solid var(--border)}
+.control-group label{display:block;font-size:0.85rem;color:var(--text);margin-bottom:0.5rem;font-weight:600}
+.control-group input[type=range]{width:100%;accent-color:var(--accent)}
+.control-group select{width:100%;background:var(--white);border:2px solid var(--border);color:var(--text-dark);padding:0.5rem;border-radius:4px;font-family:inherit}
+.budget-output{font-size:1.3rem;font-weight:700;color:var(--accent)}
+.budget-comparison{background:var(--white);padding:1.5rem;border-radius:8px;border:1px solid var(--border);margin-bottom:1.5rem;display:grid;grid-template-columns:1fr auto 1fr;gap:1rem;align-items:center;text-align:center}
+.budget-comparison .vs{color:var(--text-light);font-size:0.9rem;font-weight:700}
+.grocery-list{background:var(--white);padding:1.25rem;border-radius:8px;border:1px solid var(--border)}
+.grocery-item{display:flex;justify-content:space-between;padding:0.45rem 0;border-bottom:1px solid var(--border);font-size:0.9rem}
+.tips-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:1rem}
+.tip-card{background:var(--white);border-radius:8px;padding:1.5rem;border:1px solid var(--border);border-left:4px solid var(--accent)}
+.tip-card .tip-text{font-size:0.95rem;line-height:1.6;color:var(--text-dark)}
+.tip-card .tip-source{font-size:0.75rem;color:var(--text-light);margin-top:0.5rem;font-style:italic}
+.surprise-btn{background:var(--accent);color:#fff;border:none;padding:0.75rem 2rem;border-radius:6px;font-size:1rem;font-weight:700;font-family:inherit;cursor:pointer;transition:all 0.2s;margin-bottom:1.5rem;text-transform:uppercase;letter-spacing:0.5px}
+.surprise-btn:hover{background:var(--accent-dark);transform:scale(1.03);box-shadow:0 4px 15px rgba(51,205,102,0.3)}
+.filter-bar{display:flex;gap:0.5rem;flex-wrap:wrap;margin-bottom:1rem}
+.filter-btn{background:var(--white);border:2px solid var(--border);color:var(--text);padding:0.4rem 0.9rem;border-radius:20px;cursor:pointer;font-size:0.8rem;font-family:inherit;font-weight:600;transition:all 0.2s}
+.filter-btn:hover{border-color:var(--accent);color:var(--accent)}
+.filter-btn.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+footer{text-align:center;padding:2rem 1rem;color:var(--text-light);font-size:0.8rem;border-top:2px solid var(--accent);margin-top:2rem;background:var(--bg2)}
+footer a{color:var(--accent);text-decoration:none;font-weight:600}
+@media(max-width:768px){
+  .food-table{font-size:0.8rem}
+  .food-table th,.food-table td{padding:0.4rem 0.5rem}
+  .hero-stats{grid-template-columns:repeat(2,1fr)}
+  .nav-brand{font-size:0.9rem}
+  .budget-comparison{grid-template-columns:1fr;gap:0.5rem}
+  .nav-btn{padding:0.6rem 0.8rem;font-size:0.8rem}
+}
+</style>
+</head>
+<body>
+<nav class="nav"><div class="nav-inner">
+  <div class="nav-brand"><span>Efficiency</span> Is Everything</div>
+  <button class="nav-btn active" data-tab="rankings">Rankings</button>
+  <button class="nav-btn" data-tab="planner">Meal Planner</button>
+  <button class="nav-btn" data-tab="recipes">Recipes</button>
+  <button class="nav-btn" data-tab="budget">Budget Calc</button>
+  <button class="nav-btn" data-tab="tips">Quick Tips</button>
+  <button class="nav-btn" data-tab="books">📚 Books</button>
+  <div class="nav-right"><button class="theme-toggle" id="themeBtn">🌙 Dark Mode</button></div>
+</div></nav>
+<div class="section active" id="rankings">
+  <h2>Food <span>Rankings</span></h2>
+  <div class="hero-stats">
+    <div class="stat-card"><div class="num" id="totalFoods">0</div><div class="label">Foods Analyzed</div></div>
+    <div class="stat-card"><div class="num" id="topCalDollar">—</div><div class="label">Best Cal/$</div></div>
+    <div class="stat-card"><div class="num" id="topProtDollar">—</div><div class="label">Best Protein/$</div></div>
+    <div class="stat-card"><div class="num" id="cheapestYear">—</div><div class="label">Cheapest Annual Diet</div></div>
+  </div>
+  <div class="search-bar">
+    <input type="text" id="foodSearch" placeholder="Search foods... (e.g. chicken, beans, milk)">
+    <div class="sort-btns">
+      <button class="sort-btn active" data-sort="nutritionScore">Nutrition Score ↓</button>
+      <button class="sort-btn" data-sort="calPerDollar">Cal/$ ↓</button>
+      <button class="sort-btn" data-sort="protPerDollar">Protein/$ ↓</button>
+      <button class="sort-btn" data-sort="costPerYear">Annual Cost ↑</button>
+    </div>
+  </div>
+  <div style="overflow-x:auto">
+  <table class="food-table">
+    <thead><tr>
+      <th>#</th><th>Food</th><th data-col="price">Price</th><th data-col="calPerDollar">Cal/$</th><th data-col="protPerDollar">Prot/$</th><th data-col="nutritionScore">Score</th><th data-col="costPerYear">$/Year</th>
+    </tr></thead>
+    <tbody id="foodBody"></tbody>
+  </table>
+  </div>
+</div>
+<div class="section" id="planner">
+  <h2>4-Week <span>Meal Rotation</span></h2>
+  <p style="color:var(--text-light);margin-bottom:1rem">28 recipes from the Efficiency Is Everything Cookbook. Click any meal for the full recipe.</p>
+  <div class="week-tabs" id="weekTabs"></div>
+  <div id="weekContent"></div>
+  <div style="margin-top:1rem;padding:1rem;background:var(--white);border:1px solid var(--border);border-radius:8px">
+    <span style="color:var(--text)">Estimated weekly cost (2 people): </span>
+    <span style="color:var(--accent);font-weight:700;font-size:1.3rem" id="weekCost">~$24</span>
+  </div>
+</div>
+<div class="section" id="recipes">
+  <h2>Recipe <span>Collection</span></h2>
+  <button class="surprise-btn" id="surpriseBtn">🎲 Surprise Me</button>
+  <div class="filter-bar" id="recipeFilters">
+    <button class="filter-btn active" data-filter="all">All</button>
+    <button class="filter-btn" data-filter="chicken">🐔 Chicken</button>
+    <button class="filter-btn" data-filter="beef">🥩 Beef</button>
+    <button class="filter-btn" data-filter="pork">🐷 Pork</button>
+    <button class="filter-btn" data-filter="veg">🥬 Vegetarian</button>
+    <button class="filter-btn" data-filter="vegan">🌱 Vegan</button>
+    <button class="filter-btn" data-filter="glutenfree">🚫🌾 Gluten-Free</button>
+    <button class="filter-btn" data-filter="dairyfree">🚫🥛 Dairy-Free</button>
+    <button class="filter-btn" data-filter="slow">⏱️ Slow Cooker</button>
+    <button class="filter-btn" data-filter="fast">⚡ Under 15 min</button>
+    <button class="filter-btn" data-filter="under30">🕐 Under 30 min</button>
+    <button class="filter-btn" data-filter="mealprep">📦 Meal Prep</button>
+    <button class="filter-btn" data-filter="kidfriendly">👶 Kid Friendly</button>
+    <button class="filter-btn" data-filter="highprotein">💪 High Protein</button>
+    <button class="filter-btn" data-filter="budget">💰 $1.50/day</button>
+    <button class="filter-btn" data-filter="under3">💲 Under $3</button>
+  </div>
+  <div class="recipe-grid" id="recipeGrid"></div>
+</div>
+<div class="section" id="budget">
+  <h2>Budget <span>Calculator</span></h2>
+  <div class="budget-controls">
+    <div class="control-group">
+      <label>Weekly Food Budget: <span class="budget-output" id="budgetDisplay">$50</span></label>
+      <input type="range" id="budgetSlider" min="10" max="200" value="50" step="5">
+    </div>
+    <div class="control-group">
+      <label>Number of People: <span class="budget-output" id="peopleDisplay">2</span></label>
+      <input type="range" id="peopleSlider" min="1" max="8" value="2">
+    </div>
+    <div class="control-group">
+      <label>Dietary Focus:</label>
+      <select id="dietSelect">
+        <option value="standard">Standard (balanced)</option>
+        <option value="protein">High Protein</option>
+        <option value="vegetarian">Vegetarian</option>
+      </select>
+    </div>
+  </div>
+  <div class="budget-comparison">
+    <div><div style="font-size:2rem;font-weight:800;color:var(--accent)" id="yourCost">$25/wk</div><div style="font-size:0.85rem;color:var(--text-light)">Your Plan (per person)</div></div>
+    <div class="vs">VS</div>
+    <div><div style="font-size:2rem;font-weight:800;color:var(--red)">$75/wk</div><div style="font-size:0.85rem;color:var(--text-light)">Average American</div></div>
+  </div>
+  <div class="grocery-list">
+    <h3>Recommended Foods <span style="color:var(--accent)">For Your Budget</span></h3>
+    <div id="groceryItems"></div>
+  </div>
+</div>
+<div class="section" id="tips">
+  <h2>Efficiency <span>Tips</span></h2>
+  <div class="tips-grid" id="tipsGrid"></div>
+</div>
+<div class="section" id="books">
+  <h2>📚 The <span>Books</span></h2>
+  <p style="color:var(--text-light);margin-bottom:1.5rem">The complete Efficiency Is Everything book collection — cooking, nutrition, and budget eating.</p>
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(400px,1fr));gap:1.5rem">
+    <div class="book-card" style="background:var(--white);border-radius:12px;border:2px solid var(--border);overflow:hidden;transition:all 0.2s">
+      <div style="background:linear-gradient(135deg,var(--accent),var(--accent-dark));padding:2rem;text-align:center">
+        <div style="font-size:3rem;margin-bottom:0.5rem">🍳</div>
+        <div style="color:#fff;font-size:1.3rem;font-weight:700;text-transform:uppercase;letter-spacing:1px">EIE — In Cooking</div>
+        <div style="color:rgba(255,255,255,0.8);font-size:0.85rem;margin-top:0.25rem">The Cookbook V1.52 · 66 pages</div>
+      </div>
+      <div style="padding:1.5rem">
+        <p style="color:var(--text);font-size:0.9rem;line-height:1.7;margin-bottom:1rem">Recipes that have you eating for <strong style="color:var(--accent)">$24 a week</strong>. Eight recipes that take two active minutes and make enough food for a week. Work-instruction-style directions anyone can follow.</p>
+        <ul style="list-style:none;margin-bottom:1.25rem">
+          <li style="padding:0.3rem 0;font-size:0.85rem;color:var(--text)">▸ 4-week meal rotation (28 recipes)</li>
+          <li style="padding:0.3rem 0;font-size:0.85rem;color:var(--text)">▸ Slow cooker meals, stovetop, oven</li>
+          <li style="padding:0.3rem 0;font-size:0.85rem;color:var(--text)">▸ Budget grocery lists sorted by aisle</li>
+          <li style="padding:0.3rem 0;font-size:0.85rem;color:var(--text)">▸ Cooking cheat codes & efficiency tips</li>
+        </ul>
+        <div style="display:flex;gap:0.75rem;flex-wrap:wrap">
+          <a href="data/The-Cookbook-v1.4.pdf" target="_blank" style="display:inline-block;background:var(--accent);color:#fff;padding:0.6rem 1.5rem;border-radius:6px;text-decoration:none;font-weight:700;font-size:0.9rem;text-transform:uppercase;letter-spacing:0.3px;transition:all 0.2s" onmouseover="this.style.background='var(--accent-dark)'" onmouseout="this.style.background='var(--accent)'">📄 Read PDF</a>
+          <button onclick="showBookViewer('cookbook')" style="background:var(--white);border:2px solid var(--accent);color:var(--accent);padding:0.6rem 1.5rem;border-radius:6px;font-weight:700;font-size:0.9rem;font-family:inherit;cursor:pointer;text-transform:uppercase;letter-spacing:0.3px">👁️ Preview</button>
+        </div>
+      </div>
+    </div>
+    <div class="book-card" style="background:var(--white);border-radius:12px;border:2px solid var(--border);overflow:hidden;transition:all 0.2s">
+      <div style="background:linear-gradient(135deg,var(--orange),var(--red));padding:2rem;text-align:center">
+        <div style="font-size:3rem;margin-bottom:0.5rem">💰</div>
+        <div style="color:#fff;font-size:1.3rem;font-weight:700;text-transform:uppercase;letter-spacing:1px">EIE — $1.59 Perfect Eating</div>
+        <div style="color:rgba(255,255,255,0.8);font-size:0.85rem;margin-top:0.25rem">In Economic Crisis Cookbook · V0.96</div>
+      </div>
+      <div style="padding:1.5rem">
+        <p style="color:var(--text);font-size:0.9rem;line-height:1.7;margin-bottom:1rem">The extreme budget edition. Eat <strong style="color:var(--orange)">perfectly balanced nutrition for $1.59/day</strong>. Calorie-per-dollar optimized meal plans built from the EIE nutrition database.</p>
+        <ul style="list-style:none;margin-bottom:1.25rem">
+          <li style="padding:0.3rem 0;font-size:0.85rem;color:var(--text)">▸ $1.50/day complete meal plans</li>
+          <li style="padding:0.3rem 0;font-size:0.85rem;color:var(--text)">▸ Potato soup, crepes, pierogis, homemade noodles</li>
+          <li style="padding:0.3rem 0;font-size:0.85rem;color:var(--text)">▸ Calorie & nutrition per dollar rankings</li>
+          <li style="padding:0.3rem 0;font-size:0.85rem;color:var(--text)">▸ Emergency budget survival guide</li>
+        </ul>
+        <div style="display:flex;gap:0.75rem;flex-wrap:wrap">
+          <a href="https://efficiencyiseverything.com" target="_blank" style="display:inline-block;background:var(--orange);color:#fff;padding:0.6rem 1.5rem;border-radius:6px;text-decoration:none;font-weight:700;font-size:0.9rem;text-transform:uppercase;letter-spacing:0.3px;transition:all 0.2s" onmouseover="this.style.background='var(--red)'" onmouseout="this.style.background='var(--orange)'">🌐 Visit EIE</a>
+          <button onclick="showBookViewer('budget')" style="background:var(--white);border:2px solid var(--orange);color:var(--orange);padding:0.6rem 1.5rem;border-radius:6px;font-weight:700;font-size:0.9rem;font-family:inherit;cursor:pointer;text-transform:uppercase;letter-spacing:0.3px">👁️ Preview</button>
+        </div>
+      </div>
+    </div>
+    <div class="book-card" style="background:var(--white);border-radius:12px;border:2px solid var(--border);overflow:hidden;transition:all 0.2s">
+      <div style="background:linear-gradient(135deg,var(--accent-blue),#1565c0);padding:2rem;text-align:center">
+        <div style="font-size:3rem;margin-bottom:0.5rem">⚡</div>
+        <div style="color:#fff;font-size:1.3rem;font-weight:700;text-transform:uppercase;letter-spacing:1px">EIE — Speed Cooking</div>
+        <div style="color:rgba(255,255,255,0.8);font-size:0.85rem;margin-top:0.25rem">Experimental Alpha · V0.98 · 41 pages</div>
+      </div>
+      <div style="padding:1.5rem">
+        <p style="color:var(--text);font-size:0.9rem;line-height:1.7;margin-bottom:1rem">Save <strong style="color:var(--accent-blue)">20–120 minutes per day</strong> by reducing active cooking to 2 minutes. Target: 1000 calories per minute of active prep. Industrial engineering meets the kitchen.</p>
+        <ul style="list-style:none;margin-bottom:1.25rem">
+          <li style="padding:0.3rem 0;font-size:0.85rem;color:var(--text)">▸ 1-minute chicken, noodles, rice, vegetables</li>
+          <li style="padding:0.3rem 0;font-size:0.85rem;color:var(--text)">▸ Calories-per-minute rankings for recipes</li>
+          <li style="padding:0.3rem 0;font-size:0.85rem;color:var(--text)">▸ Speed lifestyle: batch cooking, delivery hacks</li>
+          <li style="padding:0.3rem 0;font-size:0.85rem;color:var(--text)">▸ "Approaching Infinity" cal/min zero-prep foods</li>
+        </ul>
+        <div style="display:flex;gap:0.75rem;flex-wrap:wrap">
+          <a href="data/Speed-Cooking-v0.98.pdf" target="_blank" style="display:inline-block;background:var(--accent-blue);color:#fff;padding:0.6rem 1.5rem;border-radius:6px;text-decoration:none;font-weight:700;font-size:0.9rem;text-transform:uppercase;letter-spacing:0.3px;transition:all 0.2s" onmouseover="this.style.background='#1565c0'" onmouseout="this.style.background='var(--accent-blue)'">📄 Read PDF</a>
+          <button onclick="showBookViewer('speed')" style="background:var(--white);border:2px solid var(--accent-blue);color:var(--accent-blue);padding:0.6rem 1.5rem;border-radius:6px;font-weight:700;font-size:0.9rem;font-family:inherit;cursor:pointer;text-transform:uppercase;letter-spacing:0.3px">👁️ Preview</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="bookViewer" style="display:none;margin-top:2rem;background:var(--white);border-radius:12px;border:2px solid var(--border);overflow:hidden">
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:1rem 1.5rem;border-bottom:2px solid var(--accent);background:var(--bg2)">
+      <h3 id="bookViewerTitle" style="margin:0;color:var(--accent)">Book Preview</h3>
+      <button onclick="document.getElementById('bookViewer').style.display='none'" style="background:none;border:none;color:var(--text-light);font-size:1.5rem;cursor:pointer">&times;</button>
+    </div>
+    <iframe id="bookFrame" style="width:100%;height:80vh;border:none" src=""></iframe>
+  </div>
+  <div style="margin-top:2rem;padding:1.5rem;background:var(--bg2);border-radius:8px;border:1px solid var(--border)">
+    <h3 style="color:var(--text-dark);margin-bottom:0.5rem">About the Books</h3>
+    <p style="color:var(--text);font-size:0.9rem;line-height:1.7">Written by Michael Kirk, these books apply <strong>Industrial Engineering principles</strong> to everyday cooking and eating. The philosophy: food should be delicious, fast, cheap, and nutritious — and with the right system, it can be all four. Every recipe is battle-tested on a real family budget.</p>
+  </div>
+</div>
+<div class="modal-overlay" id="modal">
+  <div class="modal">
+    <button class="modal-close" id="modalClose">&times;</button>
+    <div id="modalContent"></div>
+  </div>
+</div>
+<footer>
+  Data from <a href="https://efficiencyiseverything.com" target="_blank">Efficiency Is Everything</a> by Michael Kirk<br>
+  Industrial Engineering Applied to Life — Save Time, Save Money, Live Better
+</footer>
+<script>
+var FOODS = [{"id":0,"name":"Flour","price":2.54,"calPerDollar":4464,"protPerDollar":134,"nutritionScore":17.84,"rank":1,"costPerYear":164,"fiberPerDollar":48.5,"calciumPerDollar":269,"ironPerDollar":83.3,"vitCPerDollar":0,"vitAPerDollar":0,"ratios":{"calories":1,"protein":1,"fiber":0.944,"calcium":0.139,"iron":1,"vitC":0,"vitA":0},"store":"Walmart"},{"id":1,"name":"Milk","price":2.28,"calPerDollar":1049,"protPerDollar":54.2,"nutritionScore":10.05,"rank":0.5634072242248969,"costPerYear":809,"fiberPerDollar":0,"calciumPerDollar":1944,"ironPerDollar":0.52,"vitCPerDollar":0,"vitAPerDollar":2786,"ratios":{"calories":0.161,"protein":0.292,"fiber":0,"calcium":1,"iron":0.006,"vitC":0,"vitA":0.026},"store":""},{"id":2,"name":"Eggs","price":1.44,"calPerDollar":817,"protPerDollar":56.7,"nutritionScore":8.19,"rank":0.4588821177556141,"costPerYear":910,"fiberPerDollar":0,"calciumPerDollar":258,"ironPerDollar":7.88,"vitCPerDollar":0,"vitAPerDollar":3279,"ratios":{"calories":0.125,"protein":0.306,"fiber":0,"calcium":0.133,"iron":0.095,"vitC":0,"vitA":0.03},"store":""},{"id":3,"name":"Cereal","price":3.73,"calPerDollar":642,"protPerDollar":11.4,"nutritionScore":7.8,"rank":0.43730475362625804,"costPerYear":0,"fiberPerDollar":6.9,"calciumPerDollar":534,"ironPerDollar":24.07,"vitCPerDollar":32.1,"vitAPerDollar":2675,"ratios":{"calories":0.098,"protein":0.061,"fiber":0.134,"calcium":0.275,"iron":0.289,"vitC":0.083,"vitA":0.025},"store":""},{"id":4,"name":"Romaine Lettuce","price":0.98,"calPerDollar":151,"protPerDollar":10.9,"nutritionScore":7.61,"rank":0.42656005583287754,"costPerYear":0,"fiberPerDollar":18.7,"calciumPerDollar":294,"ironPerDollar":8.63,"vitCPerDollar":35.6,"vitAPerDollar":77530,"ratios":{"calories":0.023,"protein":0.059,"fiber":0.364,"calcium":0.151,"iron":0.104,"vitC":0.092,"vitA":0.714},"store":""},{"id":5,"name":"Kale","price":0.98,"calPerDollar":153,"protPerDollar":13.4,"nutritionScore":7.6,"rank":0.4261631585946128,"costPerYear":0,"fiberPerDollar":11.3,"calciumPerDollar":469,"ironPerDollar":4.6,"vitCPerDollar":375.6,"vitAPerDollar":31267,"ratios":{"calories":0.023,"protein":0.072,"fiber":0.219,"calcium":0.242,"iron":0.055,"vitC":0.972,"vitA":0.288},"store":""},{"id":6,"name":"Carrots","price":3.12,"calPerDollar":267,"protPerDollar":6,"nutritionScore":7,"rank":0.3921469708456339,"costPerYear":0,"fiberPerDollar":18.2,"calciumPerDollar":215,"ironPerDollar":1.95,"vitCPerDollar":38.4,"vitAPerDollar":108653,"ratios":{"calories":0.041,"protein":0.033,"fiber":0.355,"calcium":0.11,"iron":0.023,"vitC":0.099,"vitA":1},"store":""},{"id":7,"name":"Pinto Beans","price":15.98,"calPerDollar":816,"protPerDollar":51.4,"nutritionScore":6.51,"rank":0.36488311988668565,"costPerYear":711,"fiberPerDollar":51.4,"calciumPerDollar":263,"ironPerDollar":11.93,"vitCPerDollar":4.6,"vitAPerDollar":0,"ratios":{"calories":0.125,"protein":0.277,"fiber":1,"calcium":0.135,"iron":0.143,"vitC":0.012,"vitA":0},"store":""},{"id":8,"name":"Russet Potatoes","price":3.52,"calPerDollar":964,"protPerDollar":25.9,"nutritionScore":6.41,"rank":0.3593334844901015,"costPerYear":0,"fiberPerDollar":22.8,"calciumPerDollar":155,"ironPerDollar":11.19,"vitCPerDollar":99.5,"vitAPerDollar":104,"ratios":{"calories":0.147,"protein":0.14,"fiber":0.444,"calcium":0.08,"iron":0.134,"vitC":0.257,"vitA":0.001},"store":""},{"id":9,"name":"Black Beans","price":0.92,"calPerDollar":654,"protPerDollar":43.9,"nutritionScore":6.34,"rank":0.35553092495844907,"costPerYear":0,"fiberPerDollar":43.1,"calciumPerDollar":134,"ironPerDollar":10.41,"vitCPerDollar":0,"vitAPerDollar":30,"ratios":{"calories":0.1,"protein":0.237,"fiber":0.84,"calcium":0.069,"iron":0.125,"vitC":0,"vitA":0},"store":""},{"id":10,"name":"Peanuts","price":4.48,"calPerDollar":1154,"protPerDollar":52.5,"nutritionScore":5.94,"rank":0.33290533998026656,"costPerYear":0,"fiberPerDollar":17.3,"calciumPerDollar":187,"ironPerDollar":9.32,"vitCPerDollar":0,"vitAPerDollar":0,"ratios":{"calories":0.177,"protein":0.283,"fiber":0.337,"calcium":0.096,"iron":0.112,"vitC":0,"vitA":0},"store":""},{"id":11,"name":"Spinach","price":0.98,"calPerDollar":60,"protPerDollar":7.5,"nutritionScore":5.34,"rank":0.29947939282187674,"costPerYear":0,"fiberPerDollar":5.8,"calciumPerDollar":260,"ironPerDollar":7.11,"vitCPerDollar":73.7,"vitAPerDollar":24595,"ratios":{"calories":0.009,"protein":0.04,"fiber":0.112,"calcium":0.134,"iron":0.085,"vitC":0.191,"vitA":0.226},"store":""},{"id":12,"name":"Sweet Potatoes","price":0.98,"calPerDollar":325,"protPerDollar":7.3,"nutritionScore":4.74,"rank":0.2658458214790811,"costPerYear":0,"fiberPerDollar":11.9,"calciumPerDollar":137,"ironPerDollar":2.49,"vitCPerDollar":70.7,"vitAPerDollar":69367,"ratios":{"calories":0.05,"protein":0.039,"fiber":0.232,"calcium":0.071,"iron":0.03,"vitC":0.183,"vitA":0.638},"store":""},{"id":13,"name":"Turnip Greens","price":0.98,"calPerDollar":76,"protPerDollar":3.6,"nutritionScore":4.68,"rank":0.26231565552695774,"costPerYear":0,"fiberPerDollar":7.6,"calciumPerDollar":452,"ironPerDollar":2.62,"vitCPerDollar":142.7,"vitAPerDollar":27561,"ratios":{"calories":0.012,"protein":0.019,"fiber":0.148,"calcium":0.233,"iron":0.031,"vitC":0.369,"vitA":0.254},"store":""},{"id":14,"name":"Split Peas","price":1.14,"calPerDollar":464,"protPerDollar":33.4,"nutritionScore":4.16,"rank":0.23335756310796074,"costPerYear":0,"fiberPerDollar":33.2,"calciumPerDollar":56,"ironPerDollar":5.16,"vitCPerDollar":1.6,"vitAPerDollar":28,"ratios":{"calories":0.071,"protein":0.18,"fiber":0.646,"calcium":0.029,"iron":0.062,"vitC":0.004,"vitA":0},"store":""},{"id":15,"name":"Brown Rice","price":1.26,"calPerDollar":890,"protPerDollar":19.8,"nutritionScore":4.08,"rank":0.22872613463826946,"costPerYear":315,"fiberPerDollar":11.6,"calciumPerDollar":22,"ironPerDollar":4.05,"vitCPerDollar":0,"vitAPerDollar":0,"ratios":{"calories":0.136,"protein":0.107,"fiber":0.225,"calcium":0.011,"iron":0.049,"vitC":0,"vitA":0},"store":""},{"id":16,"name":"Butternut Squash","price":1.24,"calPerDollar":146,"protPerDollar":3.3,"nutritionScore":3.95,"rank":0.22154643051574954,"costPerYear":976,"fiberPerDollar":11.7,"calciumPerDollar":150,"ironPerDollar":2.19,"vitCPerDollar":55.2,"vitAPerDollar":40797,"ratios":{"calories":0.022,"protein":0.018,"fiber":0.228,"calcium":0.077,"iron":0.026,"vitC":0.143,"vitA":0.375},"store":""},{"id":17,"name":"Cheese","price":5.97,"calPerDollar":626,"protPerDollar":37,"nutritionScore":3.84,"rank":0.21523802138543136,"costPerYear":936,"fiberPerDollar":0,"calciumPerDollar":1086,"ironPerDollar":0.24,"vitCPerDollar":0,"vitAPerDollar":1518,"ratios":{"calories":0.096,"protein":0.2,"fiber":0,"calcium":0.559,"iron":0.003,"vitC":0,"vitA":0.014},"store":""},{"id":18,"name":"Frozen Carrots","price":0.98,"calPerDollar":129,"protPerDollar":2,"nutritionScore":3.7,"rank":0.20721333787279497,"costPerYear":0,"fiberPerDollar":11.5,"calciumPerDollar":122,"ironPerDollar":1.85,"vitCPerDollar":8,"vitAPerDollar":59075,"ratios":{"calories":0.02,"protein":0.011,"fiber":0.224,"calcium":0.063,"iron":0.022,"vitC":0.021,"vitA":0.544},"store":""},{"id":19,"name":"Green Cabbage","price":0.48,"calPerDollar":189,"protPerDollar":9.7,"nutritionScore":3.67,"rank":0.20545026746587802,"costPerYear":0,"fiberPerDollar":18.9,"calciumPerDollar":302,"ironPerDollar":3.55,"vitCPerDollar":276.6,"vitAPerDollar":741,"ratios":{"calories":0.029,"protein":0.052,"fiber":0.368,"calcium":0.156,"iron":0.043,"vitC":0.716,"vitA":0.007},"store":""},{"id":20,"name":"Light Red Kidney Beans","price":0.97,"calPerDollar":155,"protPerDollar":22.7,"nutritionScore":3.65,"rank":0.20462788518536973,"costPerYear":0,"fiberPerDollar":0,"calciumPerDollar":89,"ironPerDollar":4.18,"vitCPerDollar":167.4,"vitAPerDollar":9,"ratios":{"calories":0.024,"protein":0.122,"fiber":0,"calcium":0.046,"iron":0.05,"vitC":0.433,"vitA":0},"store":""},{"id":21,"name":"Canned Tomatoes","price":0.5,"calPerDollar":148,"protPerDollar":7.8,"nutritionScore":3.61,"rank":0.2021496484454965,"costPerYear":0,"fiberPerDollar":5.8,"calciumPerDollar":90,"ironPerDollar":5.59,"vitCPerDollar":187.4,"vitAPerDollar":4020,"ratios":{"calories":0.023,"protein":0.042,"fiber":0.112,"calcium":0.047,"iron":0.067,"vitC":0.485,"vitA":0.037},"store":""},{"id":22,"name":"Lentils","price":1.54,"calPerDollar":929,"protPerDollar":116,"nutritionScore":3.43,"rank":0.19208036121505875,"costPerYear":786,"fiberPerDollar":23.4,"calciumPerDollar":56,"ironPerDollar":9.86,"vitCPerDollar":4.4,"vitAPerDollar":24,"ratios":{"calories":0.053,"protein":0.144,"fiber":0.455,"calcium":0.029,"iron":0.118,"vitC":0.011,"vitA":0},"store":"Walmart"},{"id":23,"name":"Wheat Noodles","price":1,"calPerDollar":711,"protPerDollar":25.9,"nutritionScore":3.41,"rank":0.1910913623991781,"costPerYear":0,"fiberPerDollar":20.5,"calciumPerDollar":50,"ironPerDollar":7.2,"vitCPerDollar":0,"vitAPerDollar":0,"ratios":{"calories":0.109,"protein":0.139,"fiber":0.4,"calcium":0.026,"iron":0.086,"vitC":0,"vitA":0},"store":""},{"id":24,"name":"Curly Parsley","price":0.78,"calPerDollar":45,"protPerDollar":3.7,"nutritionScore":3.14,"rank":0.17611993800790407,"costPerYear":0,"fiberPerDollar":4.1,"calciumPerDollar":173,"ironPerDollar":7.78,"vitCPerDollar":166.8,"vitAPerDollar":10568,"ratios":{"calories":0.007,"protein":0.02,"fiber":0.081,"calcium":0.089,"iron":0.093,"vitC":0.432,"vitA":0.097},"store":""},{"id":25,"name":"Banana","price":0.52,"calPerDollar":299,"protPerDollar":3,"nutritionScore":2.9,"rank":0.1626619107302981,"costPerYear":2446,"fiberPerDollar":14.9,"calciumPerDollar":29,"ironPerDollar":1.49,"vitCPerDollar":49.7,"vitAPerDollar":366,"ratios":{"calories":0.078,"protein":0.034,"fiber":0.289,"calcium":0.015,"iron":0.018,"vitC":0.129,"vitA":0.003},"store":"Walmart"},{"id":26,"name":"Red Potatoes","price":0.98,"calPerDollar":430,"protPerDollar":11.6,"nutritionScore":2.86,"rank":0.16044889790358677,"costPerYear":0,"fiberPerDollar":10.2,"calciumPerDollar":69,"ironPerDollar":5,"vitCPerDollar":44.4,"vitAPerDollar":46,"ratios":{"calories":0.066,"protein":0.062,"fiber":0.198,"calcium":0.036,"iron":0.06,"vitC":0.115,"vitA":0},"store":""},{"id":27,"name":"Jalapeno Peppers","price":1.28,"calPerDollar":95,"protPerDollar":3,"nutritionScore":2.85,"rank":0.15981799737089594,"costPerYear":0,"fiberPerDollar":9.1,"calciumPerDollar":39,"ironPerDollar":0.81,"vitCPerDollar":386.6,"vitAPerDollar":3514,"ratios":{"calories":0.014,"protein":0.016,"fiber":0.178,"calcium":0.02,"iron":0.01,"vitC":1,"vitA":0.032},"store":""},{"id":28,"name":"Collard Greens","price":0.98,"calPerDollar":67,"protPerDollar":6.3,"nutritionScore":2.82,"rank":0.1579159578113394,"costPerYear":0,"fiberPerDollar":8.4,"calciumPerDollar":484,"ironPerDollar":0.98,"vitCPerDollar":73.7,"vitAPerDollar":10480,"ratios":{"calories":0.01,"protein":0.034,"fiber":0.163,"calcium":0.249,"iron":0.012,"vitC":0.191,"vitA":0.096},"store":""},{"id":29,"name":"Frozen Peas","price":0.98,"calPerDollar":354,"protPerDollar":25,"nutritionScore":2.81,"rank":0.15760936613983736,"costPerYear":2065,"fiberPerDollar":15.7,"calciumPerDollar":84,"ironPerDollar":5.3,"vitCPerDollar":34.5,"vitAPerDollar":7329,"ratios":{"calories":0.042,"protein":0.097,"fiber":0.306,"calcium":0.043,"iron":0.064,"vitC":0.089,"vitA":0.067},"store":"Walmart"},{"id":30,"name":"Red Cabbage","price":0.84,"calPerDollar":134,"protPerDollar":6.2,"nutritionScore":2.58,"rank":0.14468631410253158,"costPerYear":0,"fiberPerDollar":9.1,"calciumPerDollar":194,"ironPerDollar":3.46,"vitCPerDollar":246.2,"vitAPerDollar":4820,"ratios":{"calories":0.02,"protein":0.033,"fiber":0.177,"calcium":0.1,"iron":0.041,"vitC":0.637,"vitA":0.044},"store":""},{"id":31,"name":"White Rice","price":7.38,"calPerDollar":803,"protPerDollar":16.6,"nutritionScore":2.42,"rank":0.1356506020355187,"costPerYear":315,"fiberPerDollar":2.5,"calciumPerDollar":62,"ironPerDollar":7.41,"vitCPerDollar":0,"vitAPerDollar":0,"ratios":{"calories":0.123,"protein":0.09,"fiber":0.048,"calcium":0.032,"iron":0.089,"vitC":0,"vitA":0},"store":""},{"id":32,"name":"Yogurt","price":1.96,"calPerDollar":330,"protPerDollar":42.2,"nutritionScore":2.36,"rank":0.13224016410387082,"costPerYear":4536,"fiberPerDollar":1.4,"calciumPerDollar":493,"ironPerDollar":0.23,"vitCPerDollar":0,"vitAPerDollar":0,"ratios":{"calories":0.051,"protein":0.228,"fiber":0.027,"calcium":0.254,"iron":0.003,"vitC":0,"vitA":0},"store":""},{"id":33,"name":"White Noodles","price":2.92,"calPerDollar":740,"protPerDollar":27.2,"nutritionScore":2.27,"rank":0.12749543618939274,"costPerYear":0,"fiberPerDollar":8.4,"calciumPerDollar":33,"ironPerDollar":6,"vitCPerDollar":0,"vitAPerDollar":0,"ratios":{"calories":0.113,"protein":0.147,"fiber":0.164,"calcium":0.017,"iron":0.072,"vitC":0,"vitA":0},"store":""},{"id":34,"name":"Organic Bananas","price":0.68,"calPerDollar":380,"protPerDollar":4.7,"nutritionScore":2.17,"rank":0.12143230285941814,"costPerYear":2446,"fiberPerDollar":11.1,"calciumPerDollar":21,"ironPerDollar":1.11,"vitCPerDollar":37.1,"vitAPerDollar":273,"ratios":{"calories":0.058,"protein":0.025,"fiber":0.216,"calcium":0.011,"iron":0.013,"vitC":0.096,"vitA":0.003},"store":""},{"id":35,"name":"Pork","price":1.94,"calPerDollar":235,"protPerDollar":35.3,"nutritionScore":2.07,"rank":0.11597544598563583,"costPerYear":3592,"fiberPerDollar":0,"calciumPerDollar":28,"ironPerDollar":1.38,"vitCPerDollar":1,"vitAPerDollar":12,"ratios":{"calories":0.036,"protein":0.19,"fiber":0,"calcium":0.014,"iron":0.017,"vitC":0.003,"vitA":0},"store":""},{"id":36,"name":"Ground Turkey","price":2.99,"calPerDollar":275,"protPerDollar":25.8,"nutritionScore":1.98,"rank":0.11073549635575124,"costPerYear":0,"fiberPerDollar":0,"calciumPerDollar":50,"ironPerDollar":2.01,"vitCPerDollar":0,"vitAPerDollar":154,"ratios":{"calories":0.042,"protein":0.139,"fiber":0,"calcium":0.026,"iron":0.024,"vitC":0,"vitA":0.001},"store":""},{"id":37,"name":"Monster","price":1.88,"calPerDollar":12,"protPerDollar":0,"nutritionScore":1.88,"rank":0.10549712592227492,"costPerYear":0,"fiberPerDollar":0,"calciumPerDollar":0,"ironPerDollar":0,"vitCPerDollar":0,"vitAPerDollar":0,"ratios":{"calories":0.002,"protein":0,"fiber":0,"calcium":0,"iron":0,"vitC":0,"vitA":0},"store":""},{"id":38,"name":"Flat Italy Parsley","price":0.88,"calPerDollar":26,"protPerDollar":2.2,"nutritionScore":1.84,"rank":0.10306047563922366,"costPerYear":0,"fiberPerDollar":2.4,"calciumPerDollar":101,"ironPerDollar":4.55,"vitCPerDollar":97.6,"vitAPerDollar":6184,"ratios":{"calories":0.004,"protein":0.012,"fiber":0.047,"calcium":0.052,"iron":0.055,"vitC":0.253,"vitA":0.057},"store":""},{"id":39,"name":"Iceberg lettuce","price":0.98,"calPerDollar":101,"protPerDollar":6.5,"nutritionScore":1.83,"rank":0.10244439180496978,"costPerYear":0,"fiberPerDollar":8.7,"calciumPerDollar":130,"ironPerDollar":2.96,"vitCPerDollar":20.2,"vitAPerDollar":3621,"ratios":{"calories":0.015,"protein":0.035,"fiber":0.168,"calcium":0.067,"iron":0.035,"vitC":0.052,"vitA":0.033},"store":""},{"id":40,"name":"Watermellon","price":6.98,"calPerDollar":145,"protPerDollar":3,"nutritionScore":1.82,"rank":0.10213986244954751,"costPerYear":0,"fiberPerDollar":1.9,"calciumPerDollar":34,"ironPerDollar":1.16,"vitCPerDollar":39.2,"vitAPerDollar":2754,"ratios":{"calories":0.022,"protein":0.016,"fiber":0.038,"calcium":0.017,"iron":0.014,"vitC":0.101,"vitA":0.025},"store":""},{"id":41,"name":"Roma Tomatoes","price":0.98,"calPerDollar":76,"protPerDollar":3.7,"nutritionScore":1.75,"rank":0.09804301105669558,"costPerYear":0,"fiberPerDollar":5.1,"calciumPerDollar":42,"ironPerDollar":1.14,"vitCPerDollar":57.7,"vitAPerDollar":3508,"ratios":{"calories":0.012,"protein":0.02,"fiber":0.098,"calcium":0.022,"iron":0.014,"vitC":0.149,"vitA":0.032},"store":""},{"id":42,"name":"Green Pepper","price":0.5,"calPerDollar":66,"protPerDollar":2.9,"nutritionScore":1.68,"rank":0.09407414231001536,"costPerYear":0,"fiberPerDollar":5.7,"calciumPerDollar":33,"ironPerDollar":1.13,"vitCPerDollar":267.2,"vitAPerDollar":1230,"ratios":{"calories":0.01,"protein":0.015,"fiber":0.11,"calcium":0.017,"iron":0.014,"vitC":0.691,"vitA":0.011},"store":""},{"id":43,"name":"Corn Oil","price":7.98,"calPerDollar":3879,"protPerDollar":0,"nutritionScore":1.68,"rank":0.09406253544976936,"costPerYear":0,"fiberPerDollar":0,"calciumPerDollar":0,"ironPerDollar":0,"vitCPerDollar":0,"vitAPerDollar":0,"ratios":{"calories":0.594,"protein":0,"fiber":0,"calcium":0,"iron":0,"vitC":0,"vitA":0},"store":""},{"id":44,"name":"Frozen Corn","price":5.98,"calPerDollar":197,"protPerDollar":6.5,"nutritionScore":1.6,"rank":0.08981033253975446,"costPerYear":0,"fiberPerDollar":5.9,"calciumPerDollar":6,"ironPerDollar":1.28,"vitCPerDollar":10.1,"vitAPerDollar":487,"ratios":{"calories":0.03,"protein":0.035,"fiber":0.114,"calcium":0.003,"iron":0.015,"vitC":0.026,"vitA":0.004},"store":""},{"id":45,"name":"Oranges","price":0.48,"calPerDollar":170,"protPerDollar":3.4,"nutritionScore":1.57,"rank":0.08807606755884222,"costPerYear":0,"fiberPerDollar":8.7,"calciumPerDollar":145,"ironPerDollar":0.36,"vitCPerDollar":192.6,"vitAPerDollar":814,"ratios":{"calories":0.026,"protein":0.018,"fiber":0.169,"calcium":0.074,"iron":0.004,"vitC":0.498,"vitA":0.007},"store":""},{"id":46,"name":"Plantains","price":0.62,"calPerDollar":317,"protPerDollar":3.4,"nutritionScore":1.55,"rank":0.08677124785496558,"costPerYear":0,"fiberPerDollar":6,"calciumPerDollar":8,"ironPerDollar":1.56,"vitCPerDollar":47.8,"vitAPerDollar":2930,"ratios":{"calories":0.049,"protein":0.018,"fiber":0.116,"calcium":0.004,"iron":0.019,"vitC":0.124,"vitA":0.027},"store":""},{"id":47,"name":"Pineapple","price":2.68,"calPerDollar":175,"protPerDollar":1.9,"nutritionScore":1.55,"rank":0.08663979349353758,"costPerYear":0,"fiberPerDollar":4.9,"calciumPerDollar":46,"ironPerDollar":1.02,"vitCPerDollar":167.4,"vitAPerDollar":203,"ratios":{"calories":0.027,"protein":0.01,"fiber":0.095,"calcium":0.023,"iron":0.012,"vitC":0.433,"vitA":0.002},"store":""},{"id":48,"name":"Garlic","price":3.48,"calPerDollar":169,"protPerDollar":7.2,"nutritionScore":1.53,"rank":0.0859269260853356,"costPerYear":0,"fiberPerDollar":2.4,"calciumPerDollar":205,"ironPerDollar":1.93,"vitCPerDollar":35.4,"vitAPerDollar":10,"ratios":{"calories":0.026,"protein":0.039,"fiber":0.046,"calcium":0.106,"iron":0.023,"vitC":0.092,"vitA":0},"store":""},{"id":49,"name":"Chicken Breast","price":1.99,"calPerDollar":358,"protPerDollar":38.4,"nutritionScore":1.52,"rank":0.08530896496832628,"costPerYear":3058,"fiberPerDollar":0,"calciumPerDollar":19,"ironPerDollar":2.02,"vitCPerDollar":0,"vitAPerDollar":133,"ratios":{"calories":0.055,"protein":0.207,"fiber":0,"calcium":0.01,"iron":0.024,"vitC":0,"vitA":0.001},"store":""},{"id":50,"name":"Veg Juice","price":2.47,"calPerDollar":340,"protPerDollar":2.2,"nutritionScore":1.51,"rank":0.0846297606634994,"costPerYear":0,"fiberPerDollar":0,"calciumPerDollar":59,"ironPerDollar":2.29,"vitCPerDollar":210.5,"vitAPerDollar":5265,"ratios":{"calories":0.052,"protein":0.012,"fiber":0,"calcium":0.03,"iron":0.027,"vitC":0.544,"vitA":0.048},"store":""},{"id":51,"name":"Mini Watermellons","price":3.98,"calPerDollar":118,"protPerDollar":2.4,"nutritionScore":1.48,"rank":0.08297636544110605,"costPerYear":0,"fiberPerDollar":1.6,"calciumPerDollar":28,"ironPerDollar":0.94,"vitCPerDollar":31.9,"vitAPerDollar":2238,"ratios":{"calories":0.018,"protein":0.013,"fiber":0.031,"calcium":0.014,"iron":0.011,"vitC":0.082,"vitA":0.021},"store":""},{"id":52,"name":"Cantaloupe","price":2.18,"calPerDollar":113,"protPerDollar":2.8,"nutritionScore":1.47,"rank":0.08231063966461197,"costPerYear":0,"fiberPerDollar":3,"calciumPerDollar":30,"ironPerDollar":0.7,"vitCPerDollar":122.3,"vitAPerDollar":11275,"ratios":{"calories":0.017,"protein":0.015,"fiber":0.058,"calcium":0.015,"iron":0.008,"vitC":0.316,"vitA":0.104},"store":""},{"id":53,"name":"Beats","price":1.98,"calPerDollar":106,"protPerDollar":4,"nutritionScore":1.42,"rank":0.07957886784810865,"costPerYear":0,"fiberPerDollar":6.9,"calciumPerDollar":39,"ironPerDollar":1.97,"vitCPerDollar":12.1,"vitAPerDollar":81,"ratios":{"calories":0.016,"protein":0.021,"fiber":0.134,"calcium":0.02,"iron":0.024,"vitC":0.031,"vitA":0.001},"store":""},{"id":54,"name":"Cranberry Juice","price":3.18,"calPerDollar":528,"protPerDollar":2.7,"nutritionScore":1.37,"rank":0.07652675421652366,"costPerYear":0,"fiberPerDollar":5.7,"calciumPerDollar":19,"ironPerDollar":0.38,"vitCPerDollar":279.2,"vitAPerDollar":226,"ratios":{"calories":0.081,"protein":0.015,"fiber":0.11,"calcium":0.01,"iron":0.005,"vitC":0.722,"vitA":0.002},"store":""},{"id":55,"name":"Peanut Oil","price":9.98,"calPerDollar":3102,"protPerDollar":0,"nutritionScore":1.33,"rank":0.07428945013638362,"costPerYear":0,"fiberPerDollar":0,"calciumPerDollar":0,"ironPerDollar":0.11,"vitCPerDollar":0,"vitAPerDollar":0,"ratios":{"calories":0.475,"protein":0,"fiber":0,"calcium":0,"iron":0.001,"vitC":0,"vitA":0},"store":""},{"id":56,"name":"Yellow Onions","price":0.88,"calPerDollar":189,"protPerDollar":5.2,"nutritionScore":1.29,"rank":0.07212502706099756,"costPerYear":0,"fiberPerDollar":8,"calciumPerDollar":109,"ironPerDollar":0.99,"vitCPerDollar":35,"vitAPerDollar":9,"ratios":{"calories":0.029,"protein":0.028,"fiber":0.156,"calcium":0.056,"iron":0.012,"vitC":0.09,"vitA":0},"store":""},{"id":57,"name":"Sweet Onions","price":0.88,"calPerDollar":186,"protPerDollar":5.1,"nutritionScore":1.26,"rank":0.0707924630506327,"costPerYear":0,"fiberPerDollar":7.9,"calciumPerDollar":107,"ironPerDollar":0.97,"vitCPerDollar":34.3,"vitAPerDollar":9,"ratios":{"calories":0.028,"protein":0.028,"fiber":0.154,"calcium":0.055,"iron":0.012,"vitC":0.089,"vitA":0},"store":""},{"id":58,"name":"Blackberries","price":3.24,"calPerDollar":98,"protPerDollar":3.2,"nutritionScore":1.25,"rank":0.06996588521720606,"costPerYear":0,"fiberPerDollar":12.1,"calciumPerDollar":66,"ironPerDollar":1.41,"vitCPerDollar":47.9,"vitAPerDollar":488,"ratios":{"calories":0.015,"protein":0.017,"fiber":0.235,"calcium":0.034,"iron":0.017,"vitC":0.124,"vitA":0.004},"store":""},{"id":59,"name":"Atuulfo Mangos","price":0.58,"calPerDollar":161,"protPerDollar":2.2,"nutritionScore":1.16,"rank":0.06518069375895556,"costPerYear":0,"fiberPerDollar":4.3,"calciumPerDollar":29,"ironPerDollar":0.43,"vitCPerDollar":97.6,"vitAPerDollar":2901,"ratios":{"calories":0.025,"protein":0.012,"fiber":0.084,"calcium":0.015,"iron":0.005,"vitC":0.252,"vitA":0.027},"store":""},{"id":60,"name":"Red Onions","price":0.98,"calPerDollar":167,"protPerDollar":4.6,"nutritionScore":1.13,"rank":0.06356874233118039,"costPerYear":0,"fiberPerDollar":7.1,"calciumPerDollar":96,"ironPerDollar":0.87,"vitCPerDollar":30.8,"vitAPerDollar":8,"ratios":{"calories":0.025,"protein":0.025,"fiber":0.138,"calcium":0.049,"iron":0.01,"vitC":0.08,"vitA":0},"store":""},{"id":61,"name":"Yellow Squash","price":1.78,"calPerDollar":41,"protPerDollar":2.9,"nutritionScore":1.13,"rank":0.06340801296440095,"costPerYear":0,"fiberPerDollar":2.4,"calciumPerDollar":39,"ironPerDollar":0.9,"vitCPerDollar":43.3,"vitAPerDollar":484,"ratios":{"calories":0.006,"protein":0.016,"fiber":0.047,"calcium":0.02,"iron":0.011,"vitC":0.112,"vitA":0.004},"store":""},{"id":62,"name":"Maradol Papayas","price":1.46,"calPerDollar":83,"protPerDollar":0.9,"nutritionScore":1.13,"rank":0.06311302802363639,"costPerYear":0,"fiberPerDollar":3.3,"calciumPerDollar":39,"ironPerDollar":0.48,"vitCPerDollar":117.3,"vitAPerDollar":1830,"ratios":{"calories":0.013,"protein":0.005,"fiber":0.064,"calcium":0.02,"iron":0.006,"vitC":0.303,"vitA":0.017},"store":""},{"id":63,"name":"Avacados","price":1.48,"calPerDollar":185,"protPerDollar":2.3,"nutritionScore":1.12,"rank":0.06266916927144517,"costPerYear":0,"fiberPerDollar":7.7,"calciumPerDollar":14,"ironPerDollar":0.64,"vitCPerDollar":11.6,"vitAPerDollar":169,"ratios":{"calories":0.028,"protein":0.012,"fiber":0.151,"calcium":0.007,"iron":0.008,"vitC":0.03,"vitA":0.002},"store":""},{"id":64,"name":"White Onions","price":0.98,"calPerDollar":159,"protPerDollar":4.4,"nutritionScore":1.08,"rank":0.06050466853246088,"costPerYear":3545,"fiberPerDollar":6.7,"calciumPerDollar":91,"ironPerDollar":0.83,"vitCPerDollar":29.3,"vitAPerDollar":8,"ratios":{"calories":0.024,"protein":0.024,"fiber":0.131,"calcium":0.047,"iron":0.01,"vitC":0.076,"vitA":0},"store":""},{"id":65,"name":"Green Beans","price":1.98,"calPerDollar":63,"protPerDollar":3.7,"nutritionScore":1.07,"rank":0.06009658506693384,"costPerYear":0,"fiberPerDollar":5.5,"calciumPerDollar":75,"ironPerDollar":2.09,"vitCPerDollar":24.7,"vitAPerDollar":1398,"ratios":{"calories":0.01,"protein":0.02,"fiber":0.107,"calcium":0.039,"iron":0.025,"vitC":0.064,"vitA":0.013},"store":""},{"id":66,"name":"Spaghetti Squash","price":1.24,"calPerDollar":99,"protPerDollar":2.4,"nutritionScore":1,"rank":0.05615367626132929,"costPerYear":0,"fiberPerDollar":5.1,"calciumPerDollar":77,"ironPerDollar":1.24,"vitCPerDollar":12.8,"vitAPerDollar":402,"ratios":{"calories":0.015,"protein":0.013,"fiber":0.1,"calcium":0.04,"iron":0.015,"vitC":0.033,"vitA":0.004},"store":""},{"id":67,"name":"Almonds","price":5.14,"calPerDollar":180,"protPerDollar":6.6,"nutritionScore":0.97,"rank":0.05418643242628681,"costPerYear":0,"fiberPerDollar":3.9,"calciumPerDollar":84,"ironPerDollar":1.15,"vitCPerDollar":0,"vitAPerDollar":1,"ratios":{"calories":0.028,"protein":0.035,"fiber":0.076,"calcium":0.043,"iron":0.014,"vitC":0,"vitA":0},"store":""},{"id":68,"name":"Grapefruit","price":0.68,"calPerDollar":90,"protPerDollar":1.8,"nutritionScore":0.96,"rank":0.05397497067993384,"costPerYear":0,"fiberPerDollar":3.1,"calciumPerDollar":34,"ironPerDollar":0.25,"vitCPerDollar":96.5,"vitAPerDollar":2602,"ratios":{"calories":0.014,"protein":0.01,"fiber":0.06,"calcium":0.017,"iron":0.003,"vitC":0.25,"vitA":0.024},"store":""},{"id":69,"name":"Mangos","price":1.28,"calPerDollar":129,"protPerDollar":1.8,"nutritionScore":0.93,"rank":0.05219198958738285,"costPerYear":0,"fiberPerDollar":3.4,"calciumPerDollar":24,"ironPerDollar":0.34,"vitCPerDollar":78.1,"vitAPerDollar":2323,"ratios":{"calories":0.02,"protein":0.009,"fiber":0.067,"calcium":0.012,"iron":0.004,"vitC":0.202,"vitA":0.021},"store":""},{"id":70,"name":"Golden Honey Dew","price":2.78,"calPerDollar":122,"protPerDollar":1.8,"nutritionScore":0.91,"rank":0.05105894183879644,"costPerYear":0,"fiberPerDollar":2.7,"calciumPerDollar":20,"ironPerDollar":0.58,"vitCPerDollar":61.1,"vitAPerDollar":170,"ratios":{"calories":0.019,"protein":0.01,"fiber":0.053,"calcium":0.01,"iron":0.007,"vitC":0.158,"vitA":0.002},"store":""},{"id":71,"name":"Red Pepper","price":1.64,"calPerDollar":31,"protPerDollar":1,"nutritionScore":0.9,"rank":0.0504018318928028,"costPerYear":0,"fiberPerDollar":2.1,"calciumPerDollar":7,"ironPerDollar":0.44,"vitCPerDollar":129.6,"vitAPerDollar":3178,"ratios":{"calories":0.005,"protein":0.005,"fiber":0.041,"calcium":0.004,"iron":0.005,"vitC":0.335,"vitA":0.029},"store":""},{"id":72,"name":"Radishes","price":0.98,"calPerDollar":40,"protPerDollar":1.7,"nutritionScore":0.84,"rank":0.04703196161772727,"costPerYear":0,"fiberPerDollar":4,"calciumPerDollar":63,"ironPerDollar":0.86,"vitCPerDollar":37.4,"vitAPerDollar":18,"ratios":{"calories":0.006,"protein":0.009,"fiber":0.079,"calcium":0.032,"iron":0.01,"vitC":0.097,"vitA":0},"store":""},{"id":73,"name":"Leeks","price":2.98,"calPerDollar":71,"protPerDollar":1.8,"nutritionScore":0.81,"rank":0.04521424196054431,"costPerYear":0,"fiberPerDollar":2.1,"calciumPerDollar":69,"ironPerDollar":2.45,"vitCPerDollar":14,"vitAPerDollar":1947,"ratios":{"calories":0.011,"protein":0.009,"fiber":0.041,"calcium":0.035,"iron":0.029,"vitC":0.036,"vitA":0.018},"store":""},{"id":74,"name":"Strawberries","price":2.28,"calPerDollar":54,"protPerDollar":1.1,"nutritionScore":0.71,"rank":0.039635023231878,"costPerYear":0,"fiberPerDollar":3.4,"calciumPerDollar":27,"ironPerDollar":0.69,"vitCPerDollar":98.8,"vitAPerDollar":20,"ratios":{"calories":0.008,"protein":0.006,"fiber":0.065,"calcium":0.014,"iron":0.008,"vitC":0.256,"vitA":0},"store":""},{"id":75,"name":"Grapes","price":2.28,"calPerDollar":221,"protPerDollar":2.3,"nutritionScore":0.71,"rank":0.039568943950619016,"costPerYear":0,"fiberPerDollar":2.9,"calciumPerDollar":32,"ironPerDollar":1.15,"vitCPerDollar":10.2,"vitAPerDollar":211,"ratios":{"calories":0.034,"protein":0.012,"fiber":0.056,"calcium":0.016,"iron":0.014,"vitC":0.026,"vitA":0.002},"store":""},{"id":76,"name":"Cilantro","price":0.68,"calPerDollar":13,"protPerDollar":1.2,"nutritionScore":0.69,"rank":0.03894708974584341,"costPerYear":0,"fiberPerDollar":1.6,"calciumPerDollar":39,"ironPerDollar":1.02,"vitCPerDollar":15.5,"vitAPerDollar":3880,"ratios":{"calories":0.002,"protein":0.007,"fiber":0.031,"calcium":0.02,"iron":0.012,"vitC":0.04,"vitA":0.036},"store":""},{"id":77,"name":"Asparagus","price":1.97,"calPerDollar":24,"protPerDollar":2.7,"nutritionScore":0.69,"rank":0.038866039884498105,"costPerYear":0,"fiberPerDollar":2.6,"calciumPerDollar":29,"ironPerDollar":2.61,"vitCPerDollar":6.8,"vitAPerDollar":922,"ratios":{"calories":0.004,"protein":0.014,"fiber":0.05,"calcium":0.015,"iron":0.031,"vitC":0.018,"vitA":0.008},"store":""},{"id":78,"name":"Red Delicious","price":0.97,"calPerDollar":242,"protPerDollar":1.1,"nutritionScore":0.6,"rank":0.03350511197104948,"costPerYear":0,"fiberPerDollar":9.4,"calciumPerDollar":25,"ironPerDollar":0.45,"vitCPerDollar":0,"vitAPerDollar":225,"ratios":{"calories":0.037,"protein":0.006,"fiber":0.184,"calcium":0.013,"iron":0.005,"vitC":0,"vitA":0.002},"store":""},{"id":79,"name":"Olive Oil","price":18.96,"calPerDollar":1342,"protPerDollar":0,"nutritionScore":0.6,"rank":0.033376887094037654,"costPerYear":586,"fiberPerDollar":0,"calciumPerDollar":2,"ironPerDollar":0.85,"vitCPerDollar":0,"vitAPerDollar":0,"ratios":{"calories":0.205,"protein":0,"fiber":0,"calcium":0.001,"iron":0.01,"vitC":0,"vitA":0},"store":""},{"id":80,"name":"Bose Pears","price":1.47,"calPerDollar":158,"protPerDollar":1,"nutritionScore":0.57,"rank":0.03171119549785304,"costPerYear":0,"fiberPerDollar":8.6,"calciumPerDollar":25,"ironPerDollar":0.5,"vitCPerDollar":11.9,"vitAPerDollar":69,"ratios":{"calories":0.024,"protein":0.005,"fiber":0.168,"calcium":0.013,"iron":0.006,"vitC":0.031,"vitA":0.001},"store":""},{"id":81,"name":"Red Pears","price":1.47,"calPerDollar":158,"protPerDollar":1,"nutritionScore":0.57,"rank":0.03171119549785304,"costPerYear":0,"fiberPerDollar":8.6,"calciumPerDollar":25,"ironPerDollar":0.5,"vitCPerDollar":11.9,"vitAPerDollar":69,"ratios":{"calories":0.024,"protein":0.005,"fiber":0.168,"calcium":0.013,"iron":0.006,"vitC":0.031,"vitA":0.001},"store":""},{"id":82,"name":"Lemons","price":0.5,"calPerDollar":40,"protPerDollar":1.5,"nutritionScore":0.51,"rank":0.028631649984282338,"costPerYear":0,"fiberPerDollar":3.8,"calciumPerDollar":36,"ironPerDollar":0.82,"vitCPerDollar":72.8,"vitAPerDollar":30,"ratios":{"calories":0.006,"protein":0.008,"fiber":0.075,"calcium":0.018,"iron":0.01,"vitC":0.188,"vitA":0},"store":""},{"id":83,"name":"Anjou Pears","price":1.57,"calPerDollar":139,"protPerDollar":0.9,"nutritionScore":0.5,"rank":0.027777565483075535,"costPerYear":0,"fiberPerDollar":7.5,"calciumPerDollar":22,"ironPerDollar":0.44,"vitCPerDollar":10.5,"vitAPerDollar":61,"ratios":{"calories":0.021,"protein":0.005,"fiber":0.147,"calcium":0.011,"iron":0.005,"vitC":0.027,"vitA":0.001},"store":""},{"id":84,"name":"Golden Delicious","price":1.27,"calPerDollar":180,"protPerDollar":0.9,"nutritionScore":0.49,"rank":0.027585261931725256,"costPerYear":0,"fiberPerDollar":7.6,"calciumPerDollar":19,"ironPerDollar":0.41,"vitCPerDollar":0,"vitAPerDollar":161,"ratios":{"calories":0.027,"protein":0.005,"fiber":0.147,"calcium":0.01,"iron":0.005,"vitC":0,"vitA":0.001},"store":""},{"id":85,"name":"Celery","price":1.34,"calPerDollar":19,"protPerDollar":0.8,"nutritionScore":0.49,"rank":0.027582903645209843,"costPerYear":0,"fiberPerDollar":1.9,"calciumPerDollar":48,"ironPerDollar":0.24,"vitCPerDollar":3.7,"vitAPerDollar":543,"ratios":{"calories":0.003,"protein":0.004,"fiber":0.038,"calcium":0.025,"iron":0.003,"vitC":0.01,"vitA":0.005},"store":""},{"id":86,"name":"Gala","price":1.25,"calPerDollar":188,"protPerDollar":0.8,"nutritionScore":0.49,"rank":0.02750213443016657,"costPerYear":0,"fiberPerDollar":7.6,"calciumPerDollar":23,"ironPerDollar":0.4,"vitCPerDollar":0,"vitAPerDollar":92,"ratios":{"calories":0.029,"protein":0.004,"fiber":0.148,"calcium":0.012,"iron":0.005,"vitC":0,"vitA":0.001},"store":""},{"id":87,"name":"Fuji Apder","price":1.27,"calPerDollar":200,"protPerDollar":0.6,"nutritionScore":0.46,"rank":0.025607854634400972,"costPerYear":0,"fiberPerDollar":6.7,"calciumPerDollar":22,"ironPerDollar":0.32,"vitCPerDollar":0,"vitAPerDollar":121,"ratios":{"calories":0.031,"protein":0.003,"fiber":0.13,"calcium":0.011,"iron":0.004,"vitC":0,"vitA":0.001},"store":""},{"id":88,"name":"Wine","price":14.97,"calPerDollar":277,"protPerDollar":0.2,"nutritionScore":0.45,"rank":0.02529899219027917,"costPerYear":0,"fiberPerDollar":0,"calciumPerDollar":27,"ironPerDollar":1.24,"vitCPerDollar":0,"vitAPerDollar":0,"ratios":{"calories":0.042,"protein":0.001,"fiber":0,"calcium":0.014,"iron":0.015,"vitC":0,"vitA":0},"store":""},{"id":89,"name":"Grany Smith","price":1.47,"calPerDollar":159,"protPerDollar":1.2,"nutritionScore":0.45,"rank":0.025243962439803137,"costPerYear":0,"fiberPerDollar":7.7,"calciumPerDollar":14,"ironPerDollar":0.41,"vitCPerDollar":0,"vitAPerDollar":274,"ratios":{"calories":0.024,"protein":0.007,"fiber":0.15,"calcium":0.007,"iron":0.005,"vitC":0,"vitA":0.003},"store":""},{"id":90,"name":"Artichokes","price":2.87,"calPerDollar":22,"protPerDollar":1.5,"nutritionScore":0.42,"rank":0.023677506805284465,"costPerYear":0,"fiberPerDollar":2.6,"calciumPerDollar":21,"ironPerDollar":0.6,"vitCPerDollar":5.5,"vitAPerDollar":6,"ratios":{"calories":0.003,"protein":0.008,"fiber":0.05,"calcium":0.011,"iron":0.007,"vitC":0.014,"vitA":0},"store":""},{"id":91,"name":"Limes","price":0.38,"calPerDollar":41,"protPerDollar":1,"nutritionScore":0.41,"rank":0.022720536057941974,"costPerYear":0,"fiberPerDollar":3.8,"calciumPerDollar":45,"ironPerDollar":0.82,"vitCPerDollar":39.7,"vitAPerDollar":68,"ratios":{"calories":0.006,"protein":0.005,"fiber":0.074,"calcium":0.023,"iron":0.01,"vitC":0.103,"vitA":0.001},"store":""},{"id":92,"name":"Rockstar","price":0.98,"calPerDollar":209,"protPerDollar":0,"nutritionScore":0.4,"rank":0.022142578346653386,"costPerYear":0,"fiberPerDollar":0,"calciumPerDollar":37,"ironPerDollar":0,"vitCPerDollar":116.3,"vitAPerDollar":0,"ratios":{"calories":0.032,"protein":0,"fiber":0,"calcium":0.019,"iron":0,"vitC":0.301,"vitA":0},"store":""},{"id":93,"name":"Raspberries","price":4.94,"calPerDollar":13,"protPerDollar":0.8,"nutritionScore":0.38,"rank":0.021111417734857932,"costPerYear":55929,"fiberPerDollar":4.3,"calciumPerDollar":17,"ironPerDollar":0.46,"vitCPerDollar":17.4,"vitAPerDollar":22,"ratios":{"calories":0.005,"protein":0.004,"fiber":0.084,"calcium":0.009,"iron":0.006,"vitC":0.045,"vitA":0},"store":"Walmart"},{"id":94,"name":"Pink Lady","price":1.77,"calPerDollar":120,"protPerDollar":0.6,"nutritionScore":0.37,"rank":0.020929630534695896,"costPerYear":0,"fiberPerDollar":5.5,"calciumPerDollar":14,"ironPerDollar":0.28,"vitCPerDollar":10.6,"vitAPerDollar":125,"ratios":{"calories":0.018,"protein":0.003,"fiber":0.108,"calcium":0.007,"iron":0.003,"vitC":0.027,"vitA":0.001},"store":""},{"id":95,"name":"Peaches","price":2.28,"calPerDollar":41,"protPerDollar":1,"nutritionScore":0.26,"rank":0.014446942957823406,"costPerYear":0,"fiberPerDollar":1.6,"calciumPerDollar":6,"ironPerDollar":0.26,"vitCPerDollar":7,"vitAPerDollar":345,"ratios":{"calories":0.006,"protein":0.005,"fiber":0.031,"calcium":0.003,"iron":0.003,"vitC":0.018,"vitA":0.003},"store":""},{"id":96,"name":"Honey Crisp","price":3.17,"calPerDollar":67,"protPerDollar":0.3,"nutritionScore":0.21,"rank":0.01168626058246427,"costPerYear":0,"fiberPerDollar":3.1,"calciumPerDollar":8,"ironPerDollar":0.15,"vitCPerDollar":5.9,"vitAPerDollar":70,"ratios":{"calories":0.01,"protein":0.002,"fiber":0.06,"calcium":0.004,"iron":0.002,"vitC":0.015,"vitA":0.001},"store":""},{"id":97,"name":"Barlet Pears","price":1.67,"calPerDollar":57,"protPerDollar":0.4,"nutritionScore":0.2,"rank":0.011325412009400323,"costPerYear":0,"fiberPerDollar":3.1,"calciumPerDollar":9,"ironPerDollar":0.18,"vitCPerDollar":4.3,"vitAPerDollar":25,"ratios":{"calories":0.009,"protein":0.002,"fiber":0.06,"calcium":0.005,"iron":0.002,"vitC":0.011,"vitA":0},"store":""},{"id":98,"name":"Budlight","price":19.42,"calPerDollar":173,"protPerDollar":1.5,"nutritionScore":0.19,"rank":0.010560738635112392,"costPerYear":0,"fiberPerDollar":0,"calciumPerDollar":17,"ironPerDollar":0,"vitCPerDollar":0,"vitAPerDollar":0,"ratios":{"calories":0.027,"protein":0.008,"fiber":0,"calcium":0.009,"iron":0,"vitC":0,"vitA":0},"store":""},{"id":99,"name":"Ginger Root","price":2.94,"calPerDollar":23,"protPerDollar":0.5,"nutritionScore":0.15,"rank":0.008282553431187572,"costPerYear":0,"fiberPerDollar":0.6,"calciumPerDollar":5,"ironPerDollar":0.17,"vitCPerDollar":1.4,"vitAPerDollar":0,"ratios":{"calories":0.003,"protein":0.003,"fiber":0.011,"calcium":0.002,"iron":0.002,"vitC":0.004,"vitA":0},"store":""},{"id":100,"name":"Blueberries","price":5.94,"calPerDollar":31,"protPerDollar":0.4,"nutritionScore":0.14,"rank":0.007821057217594036,"costPerYear":10476,"fiberPerDollar":1.3,"calciumPerDollar":3,"ironPerDollar":0.15,"vitCPerDollar":5.3,"vitAPerDollar":29,"ratios":{"calories":0.005,"protein":0.002,"fiber":0.025,"calcium":0.002,"iron":0.002,"vitC":0.014,"vitA":0},"store":""},{"id":101,"name":"Necterines","price":2.98,"calPerDollar":20,"protPerDollar":0.5,"nutritionScore":0.12,"rank":0.006931145976713011,"costPerYear":0,"fiberPerDollar":0.8,"calciumPerDollar":3,"ironPerDollar":0.13,"vitCPerDollar":2.5,"vitAPerDollar":153,"ratios":{"calories":0.003,"protein":0.003,"fiber":0.015,"calcium":0.001,"iron":0.002,"vitC":0.006,"vitA":0.001},"store":""},{"id":102,"name":"Redbull","price":3.27,"calPerDollar":63,"protPerDollar":0,"nutritionScore":0.12,"rank":0.006636002073308966,"costPerYear":0,"fiberPerDollar":0,"calciumPerDollar":11,"ironPerDollar":0,"vitCPerDollar":34.9,"vitAPerDollar":0,"ratios":{"calories":0.01,"protein":0,"fiber":0,"calcium":0.006,"iron":0,"vitC":0.09,"vitA":0},"store":""},{"id":103,"name":"Plums","price":2.48,"calPerDollar":24,"protPerDollar":0.4,"nutritionScore":0.11,"rank":0.006064229424575563,"costPerYear":0,"fiberPerDollar":0.7,"calciumPerDollar":3,"ironPerDollar":0.09,"vitCPerDollar":4.9,"vitAPerDollar":177,"ratios":{"calories":0.004,"protein":0.002,"fiber":0.014,"calcium":0.002,"iron":0.001,"vitC":0.013,"vitA":0.002},"store":""},{"id":104,"name":"Coffee","price":9.98,"calPerDollar":1,"protPerDollar":0.1,"nutritionScore":0.09,"rank":0.005006761508195346,"costPerYear":0,"fiberPerDollar":0,"calciumPerDollar":2,"ironPerDollar":0.01,"vitCPerDollar":0,"vitAPerDollar":0,"ratios":{"calories":0,"protein":0.001,"fiber":0,"calcium":0.001,"iron":0,"vitC":0,"vitA":0},"store":""},{"id":105,"name":"Black Tea","price":1.98,"calPerDollar":1,"protPerDollar":0,"nutritionScore":0.06,"rank":0.0030923144888894533,"costPerYear":0,"fiberPerDollar":0,"calciumPerDollar":0,"ironPerDollar":0.02,"vitCPerDollar":0,"vitAPerDollar":0,"ratios":{"calories":0,"protein":0,"fiber":0,"calcium":0,"iron":0,"vitC":0,"vitA":0},"store":""},{"id":106,"name":"Green Tea","price":4.12,"calPerDollar":0,"protPerDollar":0,"nutritionScore":0,"rank":0.00022699148097039557,"costPerYear":0,"fiberPerDollar":0,"calciumPerDollar":0,"ironPerDollar":0,"vitCPerDollar":0,"vitAPerDollar":0,"ratios":{"calories":0,"protein":0,"fiber":0,"calcium":0,"iron":0,"vitC":0,"vitA":0},"store":""},{"id":107,"name":"White Bread","price":0.78,"calPerDollar":3333,"protPerDollar":0,"nutritionScore":0,"rank":999,"costPerYear":219,"fiberPerDollar":0,"calciumPerDollar":0,"ironPerDollar":0,"vitCPerDollar":0,"vitAPerDollar":0,"ratios":{},"store":"Walmart"},{"id":108,"name":"Sugar","price":2.98,"calPerDollar":2854,"protPerDollar":0,"nutritionScore":0,"rank":999,"costPerYear":256,"fiberPerDollar":0,"calciumPerDollar":0,"ironPerDollar":0,"vitCPerDollar":0,"vitAPerDollar":0,"ratios":{},"store":"Walmart"},{"id":109,"name":"Rice","price":6.53,"calPerDollar":2320,"protPerDollar":0,"nutritionScore":0,"rank":999,"costPerYear":315,"fiberPerDollar":0,"calciumPerDollar":0,"ironPerDollar":0,"vitCPerDollar":0,"vitAPerDollar":0,"ratios":{},"store":"Walmart"},{"id":110,"name":"Plain Oats","price":7.89,"calPerDollar":2148,"protPerDollar":0,"nutritionScore":0,"rank":999,"costPerYear":340,"fiberPerDollar":0,"calciumPerDollar":0,"ironPerDollar":0,"vitCPerDollar":0,"vitAPerDollar":0,"ratios":{},"store":"Costco"},{"id":111,"name":"Ramen","price":2.34,"calPerDollar":1949,"protPerDollar":0,"nutritionScore":0,"rank":999,"costPerYear":375,"fiberPerDollar":0,"calciumPerDollar":0,"ironPerDollar":0,"vitCPerDollar":0,"vitAPerDollar":0,"ratios":{},"store":"Walmart"},{"id":112,"name":"Angel Hair","price":1,"calPerDollar":1600,"protPerDollar":0,"nutritionScore":0,"rank":999,"costPerYear":456,"fiberPerDollar":0,"calciumPerDollar":0,"ironPerDollar":0,"vitCPerDollar":0,"vitAPerDollar":0,"ratios":{},"store":"Walmart"},{"id":113,"name":"White Pasta","price":1,"calPerDollar":1600,"protPerDollar":0,"nutritionScore":0,"rank":999,"costPerYear":456,"fiberPerDollar":0,"calciumPerDollar":0,"ironPerDollar":0,"vitCPerDollar":0,"vitAPerDollar":0,"ratios":{},"store":"Walmart"},{"id":114,"name":"Bread Crumbs","price":1.08,"calPerDollar":1556,"protPerDollar":0,"nutritionScore":0,"rank":999,"costPerYear":469,"fiberPerDollar":0,"calciumPerDollar":0,"ironPerDollar":0,"vitCPerDollar":0,"vitAPerDollar":0,"ratios":{},"store":"Walmart"},{"id":115,"name":"Peanut Butter","price":10.99,"calPerDollar":1487,"protPerDollar":0,"nutritionScore":0,"rank":999,"costPerYear":491,"fiberPerDollar":0,"calciumPerDollar":0,"ironPerDollar":0,"vitCPerDollar":0,"vitAPerDollar":0,"ratios":{},"store":"Costco"},{"id":116,"name":"Whole Wheat Pasta","price":1,"calPerDollar":1470,"protPerDollar":0,"nutritionScore":0,"rank":999,"costPerYear":497,"fiberPerDollar":0,"calciumPerDollar":0,"ironPerDollar":0,"vitCPerDollar":0,"vitAPerDollar":0,"ratios":{},"store":"Walmart"},{"id":117,"name":"Pearled Barley","price":0.98,"calPerDollar":1429,"protPerDollar":0,"nutritionScore":0,"rank":999,"costPerYear":511,"fiberPerDollar":0,"calciumPerDollar":0,"ironPerDollar":0,"vitCPerDollar":0,"vitAPerDollar":0,"ratios":{},"store":"Walmart"},{"id":118,"name":"Extra Virgin Olive Oil 101fl oz.","price":19.28,"calPerDollar":1245,"protPerDollar":0,"nutritionScore":0,"rank":999,"costPerYear":586,"fiberPerDollar":0,"calciumPerDollar":0,"ironPerDollar":0,"vitCPerDollar":0,"vitAPerDollar":0,"ratios":{},"store":"Walmart"},{"id":119,"name":"Chocolate Frosting","price":1.48,"calPerDollar":1230,"protPerDollar":0,"nutritionScore":0,"rank":999,"costPerYear":594,"fiberPerDollar":0,"calciumPerDollar":0,"ironPerDollar":0,"vitCPerDollar":0,"vitAPerDollar":0,"ratios":{},"store":"Walmart"},{"id":120,"name":"Cheez-its","price":5.49,"calPerDollar":1230,"protPerDollar":0,"nutritionScore":0,"rank":999,"costPerYear":594,"fiberPerDollar":0,"calciumPerDollar":0,"ironPerDollar":0,"vitCPerDollar":0,"vitAPerDollar":0,"ratios":{},"store":"Costco"},{"id":121,"name":"Instant Rice","price":2.44,"calPerDollar":1148,"protPerDollar":0,"nutritionScore":0,"rank":999,"costPerYear":636,"fiberPerDollar":0,"calciumPerDollar":0,"ironPerDollar":0,"vitCPerDollar":0,"vitAPerDollar":0,"ratios":{},"store":"Walmart"},{"id":122,"name":"Pinto Beans (10lbs)","price":9.12,"calPerDollar":1026,"protPerDollar":0,"nutritionScore":0,"rank":999,"costPerYear":711,"fiberPerDollar":0,"calciumPerDollar":0,"ironPerDollar":0,"vitCPerDollar":0,"vitAPerDollar":0,"ratios":{},"store":"Walmart"},{"id":123,"name":"Goldfish Crackers","price":7.99,"calPerDollar":964,"protPerDollar":0,"nutritionScore":0,"rank":999,"costPerYear":757,"fiberPerDollar":0,"calciumPerDollar":0,"ironPerDollar":0,"vitCPerDollar":0,"vitAPerDollar":0,"ratios":{},"store":"Costco"},{"id":124,"name":"Dr. Thunder","price":0.84,"calPerDollar":952,"protPerDollar":0,"nutritionScore":0,"rank":999,"costPerYear":767,"fiberPerDollar":0,"calciumPerDollar":0,"ironPerDollar":0,"vitCPerDollar":0,"vitAPerDollar":0,"ratios":{},"store":"Walmart"},{"id":125,"name":"Whole Wheat Bread","price":1.48,"calPerDollar":946,"protPerDollar":0,"nutritionScore":0,"rank":999,"costPerYear":772,"fiberPerDollar":0,"calciumPerDollar":0,"ironPerDollar":0,"vitCPerDollar":0,"vitAPerDollar":0,"ratios":{},"store":"Walmart"},{"id":126,"name":"Olive Oil (Costco)","price":25.99,"calPerDollar":923,"protPerDollar":0,"nutritionScore":0,"rank":999,"costPerYear":791,"fiberPerDollar":0,"calciumPerDollar":0,"ironPerDollar":0,"vitCPerDollar":0,"vitAPerDollar":0,"ratios":{},"store":"Costco"},{"id":127,"name":"Whole Milk","price":2.59,"calPerDollar":902,"protPerDollar":0,"nutritionScore":0,"rank":999,"costPerYear":809,"fiberPerDollar":0,"calciumPerDollar":0,"ironPerDollar":0,"vitCPerDollar":0,"vitAPerDollar":0,"ratios":{},"store":"Walmart"},{"id":128,"name":"Flour Large Taco Shells","price":2.38,"calPerDollar":882,"protPerDollar":0,"nutritionScore":0,"rank":999,"costPerYear":827,"fiberPerDollar":0,"calciumPerDollar":0,"ironPerDollar":0,"vitCPerDollar":0,"vitAPerDollar":0,"ratios":{},"store":"Walmart"},{"id":129,"name":"Bagels","price":1.48,"calPerDollar":851,"protPerDollar":0,"nutritionScore":0,"rank":999,"costPerYear":857,"fiberPerDollar":0,"calciumPerDollar":0,"ironPerDollar":0,"vitCPerDollar":0,"vitAPerDollar":0,"ratios":{},"store":"Walmart"},{"id":130,"name":"Large Heavy Whipping Cream","price":3.78,"calPerDollar":847,"protPerDollar":0,"nutritionScore":0,"rank":999,"costPerYear":862,"fiberPerDollar":0,"calciumPerDollar":0,"ironPerDollar":0,"vitCPerDollar":0,"vitAPerDollar":0,"ratios":{},"store":"Walmart"},{"id":131,"name":"Eggs (Costco)","price":3.59,"calPerDollar":802,"protPerDollar":0,"nutritionScore":0,"rank":999,"costPerYear":910,"fiberPerDollar":0,"calciumPerDollar":0,"ironPerDollar":0,"vitCPerDollar":0,"vitAPerDollar":0,"ratios":{},"store":"Costco"},{"id":132,"name":"Kraft Mac And Cheese","price":1,"calPerDollar":780,"protPerDollar":0,"nutritionScore":0,"rank":999,"costPerYear":936,"fiberPerDollar":0,"calciumPerDollar":0,"ironPerDollar":0,"vitCPerDollar":0,"vitAPerDollar":0,"ratios":{},"store":"Walmart"},{"id":133,"name":"Instant Oatmeal","price":1.68,"calPerDollar":762,"protPerDollar":0,"nutritionScore":0,"rank":999,"costPerYear":958,"fiberPerDollar":0,"calciumPerDollar":0,"ironPerDollar":0,"vitCPerDollar":0,"vitAPerDollar":0,"ratios":{},"store":"Walmart"},{"id":134,"name":"Butter","price":4.28,"calPerDollar":748,"protPerDollar":0,"nutritionScore":0,"rank":999,"costPerYear":976,"fiberPerDollar":0,"calciumPerDollar":0,"ironPerDollar":0,"vitCPerDollar":0,"vitAPerDollar":0,"ratios":{},"store":"Walmart"},{"id":135,"name":"Miracle Whip","price":6.59,"calPerDollar":728,"protPerDollar":0,"nutritionScore":0,"rank":999,"costPerYear":1002,"fiberPerDollar":0,"calciumPerDollar":0,"ironPerDollar":0,"vitCPerDollar":0,"vitAPerDollar":0,"ratios":{},"store":"Costco"},{"id":136,"name":"Dry 15 Bean Soup","price":2.64,"calPerDollar":727,"protPerDollar":0,"nutritionScore":0,"rank":999,"costPerYear":1004,"fiberPerDollar":0,"calciumPerDollar":0,"ironPerDollar":0,"vitCPerDollar":0,"vitAPerDollar":0,"ratios":{},"store":"Walmart"},{"id":137,"name":"Crisp Rice","price":2.74,"calPerDollar":712,"protPerDollar":0,"nutritionScore":0,"rank":999,"costPerYear":1026,"fiberPerDollar":0,"calciumPerDollar":0,"ironPerDollar":0,"vitCPerDollar":0,"vitAPerDollar":0,"ratios":{},"store":"Walmart"},{"id":138,"name":"0.5% Milk","price":2.29,"calPerDollar":699,"protPerDollar":0,"nutritionScore":0,"rank":999,"costPerYear":1045,"fiberPerDollar":0,"calciumPerDollar":0,"ironPerDollar":0,"vitCPerDollar":0,"vitAPerDollar":0,"ratios":{},"store":"Walmart"},{"id":139,"name":"Quinoa","price":9.48,"calPerDollar":287,"protPerDollar":12,"nutritionScore":0,"rank":999,"costPerYear":2544,"fiberPerDollar":0,"calciumPerDollar":0,"ironPerDollar":0,"vitCPerDollar":0,"vitAPerDollar":0,"ratios":{},"store":"Walmart"},{"id":140,"name":"Poptarts(Chocolate)","price":3.68,"calPerDollar":652,"protPerDollar":0,"nutritionScore":0,"rank":999,"costPerYear":1119,"fiberPerDollar":0,"calciumPerDollar":0,"ironPerDollar":0,"vitCPerDollar":0,"vitAPerDollar":0,"ratios":{},"store":"Walmart"},{"id":141,"name":"Hershey's Kisses","price":8.98,"calPerDollar":624,"protPerDollar":0,"nutritionScore":0,"rank":999,"costPerYear":1171,"fiberPerDollar":0,"calciumPerDollar":0,"ironPerDollar":0,"vitCPerDollar":0,"vitAPerDollar":0,"ratios":{},"store":"Walmart"},{"id":142,"name":"Sweet Baby Rays BBQ","price":3.48,"calPerDollar":624,"protPerDollar":0,"nutritionScore":0,"rank":999,"costPerYear":1171,"fiberPerDollar":0,"calciumPerDollar":0,"ironPerDollar":0,"vitCPerDollar":0,"vitAPerDollar":0,"ratios":{},"store":"Walmart"},{"id":143,"name":"Frozen Burrito","price":0.44,"calPerDollar":614,"protPerDollar":0,"nutritionScore":0,"rank":999,"costPerYear":1190,"fiberPerDollar":0,"calciumPerDollar":0,"ironPerDollar":0,"vitCPerDollar":0,"vitAPerDollar":0,"ratios":{},"store":"Walmart"},{"id":144,"name":"Hamburger Buns","price":1.18,"calPerDollar":610,"protPerDollar":0,"nutritionScore":0,"rank":999,"costPerYear":1196,"fiberPerDollar":0,"calciumPerDollar":0,"ironPerDollar":0,"vitCPerDollar":0,"vitAPerDollar":0,"ratios":{},"store":"Walmart"},{"id":145,"name":"Hamburger Helper","price":1.25,"calPerDollar":600,"protPerDollar":0,"nutritionScore":0,"rank":999,"costPerYear":1217,"fiberPerDollar":0,"calciumPerDollar":0,"ironPerDollar":0,"vitCPerDollar":0,"vitAPerDollar":0,"ratios":{},"store":"Walmart"},{"id":146,"name":"Frozen Breakfast Sausages","price":3.98,"calPerDollar":588,"protPerDollar":0,"nutritionScore":0,"rank":999,"costPerYear":1242,"fiberPerDollar":0,"calciumPerDollar":0,"ironPerDollar":0,"vitCPerDollar":0,"vitAPerDollar":0,"ratios":{},"store":"Walmart"},{"id":147,"name":"Great Value Ravioli","price":0.75,"calPerDollar":587,"protPerDollar":0,"nutritionScore":0,"rank":999,"costPerYear":1244,"fiberPerDollar":0,"calciumPerDollar":0,"ironPerDollar":0,"vitCPerDollar":0,"vitAPerDollar":0,"ratios":{},"store":"Walmart"},{"id":148,"name":"Frozen Pizza","price":2.5,"calPerDollar":576,"protPerDollar":0,"nutritionScore":0,"rank":999,"costPerYear":1267,"fiberPerDollar":0,"calciumPerDollar":0,"ironPerDollar":0,"vitCPerDollar":0,"vitAPerDollar":0,"ratios":{},"store":"Walmart"},{"id":149,"name":"Eggs (Walmart)","price":2.48,"calPerDollar":566,"protPerDollar":0,"nutritionScore":0,"rank":999,"costPerYear":1289,"fiberPerDollar":0,"calciumPerDollar":0,"ironPerDollar":0,"vitCPerDollar":0,"vitAPerDollar":0,"ratios":{},"store":"Walmart"},{"id":150,"name":"Velveeta Mac and Cheese","price":1.98,"calPerDollar":545,"protPerDollar":0,"nutritionScore":0,"rank":999,"costPerYear":1338,"fiberPerDollar":0,"calciumPerDollar":0,"ironPerDollar":0,"vitCPerDollar":0,"vitAPerDollar":0,"ratios":{},"store":"Walmart"},{"id":151,"name":"Great Value Waffles","price":3.97,"calPerDollar":544,"protPerDollar":0,"nutritionScore":0,"rank":999,"costPerYear":1342,"fiberPerDollar":0,"calciumPerDollar":0,"ironPerDollar":0,"vitCPerDollar":0,"vitAPerDollar":0,"ratios":{},"store":"Walmart"},{"id":152,"name":"Kidney Beans Canned","price":0.68,"calPerDollar":515,"protPerDollar":0,"nutritionScore":0,"rank":999,"costPerYear":1418,"fiberPerDollar":0,"calciumPerDollar":0,"ironPerDollar":0,"vitCPerDollar":0,"vitAPerDollar":0,"ratios":{},"store":"Walmart"},{"id":153,"name":"Pasta Sides","price":1.3,"calPerDollar":508,"protPerDollar":0,"nutritionScore":0,"rank":999,"costPerYear":1438,"fiberPerDollar":0,"calciumPerDollar":0,"ironPerDollar":0,"vitCPerDollar":0,"vitAPerDollar":0,"ratios":{},"store":"Walmart"},{"id":154,"name":"Ego Waffles","price":4.58,"calPerDollar":498,"protPerDollar":0,"nutritionScore":0,"rank":999,"costPerYear":1466,"fiberPerDollar":0,"calciumPerDollar":0,"ironPerDollar":0,"vitCPerDollar":0,"vitAPerDollar":0,"ratios":{},"store":"Walmart"},{"id":155,"name":"Crescent Roll","price":1.68,"calPerDollar":476,"protPerDollar":0,"nutritionScore":0,"rank":999,"costPerYear":1533,"fiberPerDollar":0,"calciumPerDollar":0,"ironPerDollar":0,"vitCPerDollar":0,"vitAPerDollar":0,"ratios":{},"store":"Walmart"},{"id":156,"name":"Raisin Bread","price":2.59,"calPerDollar":452,"protPerDollar":0,"nutritionScore":0,"rank":999,"costPerYear":1616,"fiberPerDollar":0,"calciumPerDollar":0,"ironPerDollar":0,"vitCPerDollar":0,"vitAPerDollar":0,"ratios":{},"store":"Walmart"},{"id":157,"name":"Nutrigrain","price":12.99,"calPerDollar":443,"protPerDollar":0,"nutritionScore":0,"rank":999,"costPerYear":1646,"fiberPerDollar":0,"calciumPerDollar":0,"ironPerDollar":0,"vitCPerDollar":0,"vitAPerDollar":0,"ratios":{},"store":"Walmart"},{"id":158,"name":"72/27 Ground Beef","price":12.7,"calPerDollar":439,"protPerDollar":0,"nutritionScore":0,"rank":999,"costPerYear":1661,"fiberPerDollar":0,"calciumPerDollar":0,"ironPerDollar":0,"vitCPerDollar":0,"vitAPerDollar":0,"ratios":{},"store":"Walmart"},{"id":159,"name":"Little Caesar's 5 Dollar Pizza","price":5.3,"calPerDollar":423,"protPerDollar":0,"nutritionScore":0,"rank":999,"costPerYear":1727,"fiberPerDollar":0,"calciumPerDollar":0,"ironPerDollar":0,"vitCPerDollar":0,"vitAPerDollar":0,"ratios":{},"store":"LC"},{"id":160,"name":"Turkey Thanksgiving Sale","price":1.08,"calPerDollar":407,"protPerDollar":0,"nutritionScore":0,"rank":999,"costPerYear":1792,"fiberPerDollar":0,"calciumPerDollar":0,"ironPerDollar":0,"vitCPerDollar":0,"vitAPerDollar":0,"ratios":{},"store":"Walmart"},{"id":161,"name":"Great Value Italian Sausage","price":2.58,"calPerDollar":407,"protPerDollar":0,"nutritionScore":0,"rank":999,"costPerYear":1794,"fiberPerDollar":0,"calciumPerDollar":0,"ironPerDollar":0,"vitCPerDollar":0,"vitAPerDollar":0,"ratios":{},"store":"Walmart"},{"id":162,"name":"Cream Cheese","price":1.98,"calPerDollar":404,"protPerDollar":0,"nutritionScore":0,"rank":999,"costPerYear":1807,"fiberPerDollar":0,"calciumPerDollar":0,"ironPerDollar":0,"vitCPerDollar":0,"vitAPerDollar":0,"ratios":{},"store":"Walmart"},{"id":163,"name":"Taco Bell Beefy 5","price":1.3,"calPerDollar":400,"protPerDollar":0,"nutritionScore":0,"rank":999,"costPerYear":1825,"fiberPerDollar":0,"calciumPerDollar":0,"ironPerDollar":0,"vitCPerDollar":0,"vitAPerDollar":0,"ratios":{},"store":"Tacobell"},{"id":164,"name":"Sour Cream","price":2.08,"calPerDollar":387,"protPerDollar":0,"nutritionScore":0,"rank":999,"costPerYear":1886,"fiberPerDollar":0,"calciumPerDollar":0,"ironPerDollar":0,"vitCPerDollar":0,"vitAPerDollar":0,"ratios":{},"store":"Walmart"},{"id":165,"name":"Sausage McMuffin","price":1,"calPerDollar":370,"protPerDollar":0,"nutritionScore":0,"rank":999,"costPerYear":1973,"fiberPerDollar":0,"calciumPerDollar":0,"ironPerDollar":0,"vitCPerDollar":0,"vitAPerDollar":0,"ratios":{},"store":"Walmart"},{"id":166,"name":"Bagel Bites","price":7.97,"calPerDollar":251,"protPerDollar":5,"nutritionScore":0,"rank":999,"costPerYear":2909,"fiberPerDollar":0,"calciumPerDollar":0,"ironPerDollar":0,"vitCPerDollar":0,"vitAPerDollar":0,"ratios":{},"store":"Walmart"},{"id":167,"name":"Mackerel (canned)","price":1.38,"calPerDollar":348,"protPerDollar":0,"nutritionScore":0,"rank":999,"costPerYear":2099,"fiberPerDollar":0,"calciumPerDollar":0,"ironPerDollar":0,"vitCPerDollar":0,"vitAPerDollar":0,"ratios":{},"store":"Walmart"},{"id":168,"name":"Hershey's Chocolate","price":3.94,"calPerDollar":320,"protPerDollar":0,"nutritionScore":0,"rank":999,"costPerYear":2283,"fiberPerDollar":0,"calciumPerDollar":0,"ironPerDollar":0,"vitCPerDollar":0,"vitAPerDollar":0,"ratios":{},"store":"Walmart"},{"id":169,"name":"Cliff Bar","price":18.45,"calPerDollar":319,"protPerDollar":0,"nutritionScore":0,"rank":999,"costPerYear":2291,"fiberPerDollar":0,"calciumPerDollar":0,"ironPerDollar":0,"vitCPerDollar":0,"vitAPerDollar":0,"ratios":{},"store":"Costco"},{"id":170,"name":"Great Value Southern Hash","price":2,"calPerDollar":315,"protPerDollar":0,"nutritionScore":0,"rank":999,"costPerYear":2317,"fiberPerDollar":0,"calciumPerDollar":0,"ironPerDollar":0,"vitCPerDollar":0,"vitAPerDollar":0,"ratios":{},"store":"Walmart"},{"id":171,"name":"Evaporated Milk","price":0.64,"calPerDollar":313,"protPerDollar":0,"nutritionScore":0,"rank":999,"costPerYear":2336,"fiberPerDollar":0,"calciumPerDollar":0,"ironPerDollar":0,"vitCPerDollar":0,"vitAPerDollar":0,"ratios":{},"store":"Walmart"},{"id":172,"name":"Organic Tomato Paste","price":5.99,"calPerDollar":311,"protPerDollar":0,"nutritionScore":0,"rank":999,"costPerYear":2351,"fiberPerDollar":0,"calciumPerDollar":0,"ironPerDollar":0,"vitCPerDollar":0,"vitAPerDollar":0,"ratios":{},"store":"Costco"},{"id":173,"name":"Velveeta Slices","price":2.78,"calPerDollar":302,"protPerDollar":0,"nutritionScore":0,"rank":999,"costPerYear":2416,"fiberPerDollar":0,"calciumPerDollar":0,"ironPerDollar":0,"vitCPerDollar":0,"vitAPerDollar":0,"ratios":{},"store":"Walmart"},{"id":174,"name":"McDouble","price":1.3,"calPerDollar":300,"protPerDollar":0,"nutritionScore":0,"rank":999,"costPerYear":2433,"fiberPerDollar":0,"calciumPerDollar":0,"ironPerDollar":0,"vitCPerDollar":0,"vitAPerDollar":0,"ratios":{},"store":"McDonalds"},{"id":175,"name":"Muscle Milk","price":26.99,"calPerDollar":289,"protPerDollar":0,"nutritionScore":0,"rank":999,"costPerYear":2526,"fiberPerDollar":0,"calciumPerDollar":0,"ironPerDollar":0,"vitCPerDollar":0,"vitAPerDollar":0,"ratios":{},"store":"Costco"},{"id":176,"name":"Speedway Maple Sausage Biscuit","price":1.0494,"calPerDollar":276,"protPerDollar":0,"nutritionScore":0,"rank":999,"costPerYear":2642,"fiberPerDollar":0,"calciumPerDollar":0,"ironPerDollar":0,"vitCPerDollar":0,"vitAPerDollar":0,"ratios":{},"store":"Speedway"},{"id":177,"name":"88/12 Ground Beef","price":3.19,"calPerDollar":264,"protPerDollar":0,"nutritionScore":0,"rank":999,"costPerYear":2766,"fiberPerDollar":0,"calciumPerDollar":0,"ironPerDollar":0,"vitCPerDollar":0,"vitAPerDollar":0,"ratios":{},"store":"Costco"},{"id":178,"name":"Costco Broccoli Cheddar Soup","price":7.49,"calPerDollar":256,"protPerDollar":0,"nutritionScore":0,"rank":999,"costPerYear":2848,"fiberPerDollar":0,"calciumPerDollar":0,"ironPerDollar":0,"vitCPerDollar":0,"vitAPerDollar":0,"ratios":{},"store":"Costco"},{"id":179,"name":"Cottage Cheese(4% fat)","price":2.64,"calPerDollar":250,"protPerDollar":0,"nutritionScore":0,"rank":999,"costPerYear":2920,"fiberPerDollar":0,"calciumPerDollar":0,"ironPerDollar":0,"vitCPerDollar":0,"vitAPerDollar":0,"ratios":{},"store":"Walmart"},{"id":180,"name":"Chipotle","price":3.3,"calPerDollar":248,"protPerDollar":0,"nutritionScore":0,"rank":999,"costPerYear":2938,"fiberPerDollar":0,"calciumPerDollar":0,"ironPerDollar":0,"vitCPerDollar":0,"vitAPerDollar":0,"ratios":{},"store":"Chipolte"},{"id":181,"name":"Chicken","price":2.09,"calPerDollar":239,"protPerDollar":0,"nutritionScore":0,"rank":999,"costPerYear":3058,"fiberPerDollar":0,"calciumPerDollar":0,"ironPerDollar":0,"vitCPerDollar":0,"vitAPerDollar":0,"ratios":{},"store":"Walmart"},{"id":182,"name":"Lunchable","price":1.06,"calPerDollar":236,"protPerDollar":0,"nutritionScore":0,"rank":999,"costPerYear":3095,"fiberPerDollar":0,"calciumPerDollar":0,"ironPerDollar":0,"vitCPerDollar":0,"vitAPerDollar":0,"ratios":{},"store":"Walmart"},{"id":183,"name":"Cytosport","price":45.99,"calPerDollar":228,"protPerDollar":0,"nutritionScore":0,"rank":999,"costPerYear":3197,"fiberPerDollar":0,"calciumPerDollar":0,"ironPerDollar":0,"vitCPerDollar":0,"vitAPerDollar":0,"ratios":{},"store":"Costco"},{"id":184,"name":"Large Tomato Sauce Canned","price":1.24,"calPerDollar":210,"protPerDollar":0,"nutritionScore":0,"rank":999,"costPerYear":3482,"fiberPerDollar":0,"calciumPerDollar":0,"ironPerDollar":0,"vitCPerDollar":0,"vitAPerDollar":0,"ratios":{},"store":"Walmart"},{"id":185,"name":"White Onion","price":0.88,"calPerDollar":206,"protPerDollar":0,"nutritionScore":0,"rank":999,"costPerYear":3545,"fiberPerDollar":0,"calciumPerDollar":0,"ironPerDollar":0,"vitCPerDollar":0,"vitAPerDollar":0,"ratios":{},"store":"Walmart"},{"id":186,"name":"Pork Sirloin Tip Roast","price":1.99,"calPerDollar":203,"protPerDollar":0,"nutritionScore":0,"rank":999,"costPerYear":3592,"fiberPerDollar":0,"calciumPerDollar":0,"ironPerDollar":0,"vitCPerDollar":0,"vitAPerDollar":0,"ratios":{},"store":"Costco"},{"id":187,"name":"Bacon","price":5.48,"calPerDollar":179,"protPerDollar":0,"nutritionScore":0,"rank":999,"costPerYear":4082,"fiberPerDollar":0,"calciumPerDollar":0,"ironPerDollar":0,"vitCPerDollar":0,"vitAPerDollar":0,"ratios":{},"store":"Walmart"},{"id":188,"name":"Applebee's Boneless BBQ Wings","price":5.175,"calPerDollar":170,"protPerDollar":0,"nutritionScore":0,"rank":999,"costPerYear":4293,"fiberPerDollar":0,"calciumPerDollar":0,"ironPerDollar":0,"vitCPerDollar":0,"vitAPerDollar":0,"ratios":{},"store":"Applebees"},{"id":189,"name":"Tilapia","price":6.98,"calPerDollar":167,"protPerDollar":0,"nutritionScore":0,"rank":999,"costPerYear":4369,"fiberPerDollar":0,"calciumPerDollar":0,"ironPerDollar":0,"vitCPerDollar":0,"vitAPerDollar":0,"ratios":{},"store":"Walmart"},{"id":190,"name":"Greek Yogurt","price":3.48,"calPerDollar":161,"protPerDollar":0,"nutritionScore":0,"rank":999,"costPerYear":4536,"fiberPerDollar":0,"calciumPerDollar":0,"ironPerDollar":0,"vitCPerDollar":0,"vitAPerDollar":0,"ratios":{},"store":"Walmart"},{"id":191,"name":"Costco Sushi","price":11.99,"calPerDollar":158,"protPerDollar":0,"nutritionScore":0,"rank":999,"costPerYear":4631,"fiberPerDollar":0,"calciumPerDollar":0,"ironPerDollar":0,"vitCPerDollar":0,"vitAPerDollar":0,"ratios":{},"store":"Costco"},{"id":192,"name":"Cream of Chicken Soup","price":1.25,"calPerDollar":140,"protPerDollar":0,"nutritionScore":0,"rank":999,"costPerYear":5214,"fiberPerDollar":0,"calciumPerDollar":0,"ironPerDollar":0,"vitCPerDollar":0,"vitAPerDollar":0,"ratios":{},"store":"Walmart"},{"id":193,"name":"Pollock","price":5.98,"calPerDollar":140,"protPerDollar":0,"nutritionScore":0,"rank":999,"costPerYear":5224,"fiberPerDollar":0,"calciumPerDollar":0,"ironPerDollar":0,"vitCPerDollar":0,"vitAPerDollar":0,"ratios":{},"store":"Walmart"},{"id":194,"name":"Subway Footlong","price":5,"calPerDollar":138,"protPerDollar":0,"nutritionScore":0,"rank":999,"costPerYear":5290,"fiberPerDollar":0,"calciumPerDollar":0,"ironPerDollar":0,"vitCPerDollar":0,"vitAPerDollar":0,"ratios":{},"store":"Subway"},{"id":195,"name":"Frozen Chopped Onions","price":1,"calPerDollar":120,"protPerDollar":0,"nutritionScore":0,"rank":999,"costPerYear":6083,"fiberPerDollar":0,"calciumPerDollar":0,"ironPerDollar":0,"vitCPerDollar":0,"vitAPerDollar":0,"ratios":{},"store":"Kroger"},{"id":196,"name":"Canned Chicken","price":0.98,"calPerDollar":115,"protPerDollar":0,"nutritionScore":0,"rank":999,"costPerYear":6359,"fiberPerDollar":0,"calciumPerDollar":0,"ironPerDollar":0,"vitCPerDollar":0,"vitAPerDollar":0,"ratios":{},"store":"Walmart"},{"id":197,"name":"Albacore Canned Tuna","price":14.89,"calPerDollar":113,"protPerDollar":0,"nutritionScore":0,"rank":999,"costPerYear":6470,"fiberPerDollar":0,"calciumPerDollar":0,"ironPerDollar":0,"vitCPerDollar":0,"vitAPerDollar":0,"ratios":{},"store":"Costco"},{"id":198,"name":"Frozen Mixed Fruit","price":8.47,"calPerDollar":107,"protPerDollar":0,"nutritionScore":0,"rank":999,"costPerYear":6795,"fiberPerDollar":0,"calciumPerDollar":0,"ironPerDollar":0,"vitCPerDollar":0,"vitAPerDollar":0,"ratios":{},"store":"Walmart"},{"id":199,"name":"Egg Whites (carton)","price":2.36,"calPerDollar":106,"protPerDollar":0,"nutritionScore":0,"rank":999,"costPerYear":6891,"fiberPerDollar":0,"calciumPerDollar":0,"ironPerDollar":0,"vitCPerDollar":0,"vitAPerDollar":0,"ratios":{},"store":"Walmart"},{"id":200,"name":"Beef Jerky","price":14.99,"calPerDollar":96,"protPerDollar":0,"nutritionScore":0,"rank":999,"costPerYear":7599,"fiberPerDollar":0,"calciumPerDollar":0,"ironPerDollar":0,"vitCPerDollar":0,"vitAPerDollar":0,"ratios":{},"store":"Costco"},{"id":201,"name":"Salmon","price":1.42,"calPerDollar":85,"protPerDollar":0,"nutritionScore":0,"rank":999,"costPerYear":8638,"fiberPerDollar":0,"calciumPerDollar":0,"ironPerDollar":0,"vitCPerDollar":0,"vitAPerDollar":0,"ratios":{},"store":"Walmart"},{"id":202,"name":"Sliced Turkey Breast(Jeanie O)","price":5.98,"calPerDollar":78,"protPerDollar":0,"nutritionScore":0,"rank":999,"costPerYear":9353,"fiberPerDollar":0,"calciumPerDollar":0,"ironPerDollar":0,"vitCPerDollar":0,"vitAPerDollar":0,"ratios":{},"store":"Walmart"},{"id":203,"name":"Frozen Blueberries","price":11.48,"calPerDollar":70,"protPerDollar":0,"nutritionScore":0,"rank":999,"costPerYear":10476,"fiberPerDollar":0,"calciumPerDollar":0,"ironPerDollar":0,"vitCPerDollar":0,"vitAPerDollar":0,"ratios":{},"store":"Walmart"},{"id":204,"name":"Organic Diced Tomatoes","price":5.99,"calPerDollar":65,"protPerDollar":0,"nutritionScore":0,"rank":999,"costPerYear":11212,"fiberPerDollar":0,"calciumPerDollar":0,"ironPerDollar":0,"vitCPerDollar":0,"vitAPerDollar":0,"ratios":{},"store":"Costco"},{"id":205,"name":"Frozen Raspberries","price":6.98,"calPerDollar":57,"protPerDollar":0,"nutritionScore":0,"rank":999,"costPerYear":12739,"fiberPerDollar":0,"calciumPerDollar":0,"ironPerDollar":0,"vitCPerDollar":0,"vitAPerDollar":0,"ratios":{},"store":"Walmart"}];
+var RECIPES = [
+  {id:1,week:1,day:"Sunday",name:"Beef Casserole",cost:4.50,time:"15 min active",servings:6,protein:"beef",method:"oven",tags:["beef","mealprep","kidfriendly","glutenfree","dairyfree","highprotein"],ingredients:["2\u00BC lbs ground beef","1 can cream of chicken soup","Potatoes (3-4 large)","1 cup shredded cheese","Salt, pepper, garlic powder"],directions:"1. Brown the ground beef on medium-high heat, breaking into small pieces.\n2. Season with salt, pepper, garlic powder.\n3. Cut potatoes into thin slices.\n4. Layer in oven-safe dish: potatoes, ground beef, cream of chicken soup, cheese.\n5. Repeat layers. Top with remaining cheese.\n6. Bake at 350\u00B0F for 45-60 minutes until potatoes are soft."},
+  {id:2,week:1,day:"Monday",name:"Thai Fried Rice",cost:3.50,time:"20 min",servings:4,protein:"chicken",method:"stovetop",tags:["chicken","mealprep","dairyfree","under30","highprotein"],ingredients:["2-3 chicken breasts","4 cups cooked rice","4 eggs","Soy sauce","Fish sauce","Lime","Garlic","8 tbsp butter (optional)","Green onions"],directions:"1. Cut chicken into small pieces. Cook on medium-high 4 min per side.\n2. Push chicken to edges, crack eggs in center, scramble.\n3. Add rice, soy sauce, fish sauce, garlic. Toss everything.\n4. Add butter for Thai restaurant flavor.\n5. Squeeze lime, top with green onions."},
+  {id:3,week:1,day:"Tuesday",name:"Carlos' Favorite Fajitas",cost:4.00,time:"25 min",servings:4,protein:"chicken",method:"stovetop",tags:["chicken","mealprep","highprotein","under30"],ingredients:["3 chicken breasts","Flour tortillas","Pinto beans (slow cooker)","Fajita seasoning blend","Lime","Cheese, salsa"],directions:"1. Start pinto beans in slow cooker: 3 cups beans, 8 cups water.\n2. Make fajita seasoning in bulk.\n3. Cut chicken, cook 4 min each side.\n4. Spray with lime juice while cooking.\n5. Add seasoning + splash of water. Let thicken.\n6. Serve in tortillas with beans, cheese, salsa."},
+  {id:4,week:1,day:"Wednesday",name:"Slow Cooker Sausage & Peppers",cost:3.00,time:"5 min active",servings:4,protein:"pork",method:"slow cooker",tags:["pork","slow","mealprep","kidfriendly","under30"],ingredients:["4 Italian sausage links","1 jar marinara sauce","1 bell pepper, sliced","Whole wheat elbow noodles"],directions:"1. Put sausage, marinara, and peppers in slow cooker.\n2. Cook on low for 6+ hours.\n3. Cook noodles separately.\n4. Serve sausage and peppers over noodles."},
+  {id:5,week:1,day:"Thursday",name:"Breakfast for Dinner: Eggs & Sausage",cost:2.00,time:"10 min",servings:2,protein:"pork",method:"stovetop",tags:["pork","fast","kidfriendly","glutenfree","under30","highprotein"],ingredients:["6 eggs","6 breakfast sausage links","Toast","Butter"],directions:"1. Cook sausages in pot with water on medium heat.\n2. Fry eggs to preference.\n3. Toast bread.\n4. Serve together. Simple, fast, high protein per dollar."},
+  {id:6,week:1,day:"Friday",name:"Pulled Chicken BBQ",cost:3.50,time:"5 min active",servings:4,protein:"chicken",method:"slow cooker",tags:["chicken","slow","mealprep","dairyfree","glutenfree","kidfriendly","highprotein"],ingredients:["4-6 chicken thighs","1 can soda","High quality BBQ sauce","Buns"],directions:"1. Put chicken and soda in slow cooker.\n2. High 4 hours or low 6+ hours.\n3. Shred the chicken.\n4. Optional: brown in pan for crispy edges.\n5. Serve on buns with BBQ sauce."},
+  {id:7,week:1,day:"Saturday",name:"Whole Chicken & Gravy",cost:5.00,time:"20 min active",servings:6,protein:"chicken",method:"oven",tags:["chicken","mealprep","glutenfree","kidfriendly"],ingredients:["1 whole chicken","Potatoes","Green beans","Butter","Flour","Chicken bouillon cubes","Salt, pepper"],directions:"1. Preheat oven to 350\u00B0F. Season chicken.\n2. Roast until 165\u00B0F internal (~1.5 hours). Save drippings!\n3. Gravy: roux (3 tbsp butter + 3 tbsp flour) + drippings + broth.\n4. Boil potatoes, mash with butter and milk.\n5. Steam green beans. Serve together."},
+  {id:8,week:2,day:"Sunday",name:"Football Chili",cost:5.00,time:"30 min",servings:8,protein:"beef",method:"stovetop",tags:["beef","mealprep","glutenfree","dairyfree","highprotein","kidfriendly"],ingredients:["1.5-2.5 lbs ground beef","2 cans kidney beans","1 can diced tomatoes","1 can tomato sauce","Onion, green pepper","Chili spice blend","Crackers or noodles"],directions:"1. Make chili spice blend in bulk.\n2. Brown ground beef in large pan.\n3. Transfer to large pot. Cook veggies in beef drippings.\n4. Add everything: beans, tomatoes, sauce, spices.\n5. Simmer 30+ minutes (longer = better).\n6. Serve with crackers or noodles."},
+  {id:9,week:2,day:"Monday",name:"Teriyaki Chicken & Rice",cost:3.50,time:"20 min",servings:4,protein:"chicken",method:"stovetop",tags:["chicken","dairyfree","under30","highprotein","kidfriendly"],ingredients:["3 chicken breasts","Soy sauce","Brown sugar","Garlic","Ginger","Rice","Cornstarch"],directions:"1. Cook rice. Cut chicken into bite-sized pieces.\n2. Make teriyaki: soy sauce, brown sugar, garlic, ginger, cornstarch.\n3. Cook chicken 4 min per side.\n4. Add sauce, let thicken. Serve over rice."},
+  {id:10,week:2,day:"Tuesday",name:"Tacos",cost:3.50,time:"20 min",servings:4,protein:"beef",method:"stovetop",tags:["beef","fast","kidfriendly","under30","highprotein"],ingredients:["1.5 lbs ground beef","Taco seasoning","Taco shells or tortillas","Cheese, lettuce, salsa, sour cream"],directions:"1. Brown ground beef.\n2. Add taco seasoning and water. Simmer until thick.\n3. Warm shells. Build tacos with toppings."},
+  {id:11,week:2,day:"Wednesday",name:"Slow Cooker Pulled Pork BBQ",cost:4.00,time:"5 min active",servings:6,protein:"pork",method:"slow cooker",tags:["pork","slow","mealprep","dairyfree","glutenfree","kidfriendly","highprotein"],ingredients:["Pork shoulder/loin","1 can soda","BBQ sauce","Buns"],directions:"1. Put pork and soda in slow cooker.\n2. 6 hours high or 8+ hours low.\n3. Shred. Optional: brown in pan.\n4. Serve on buns with BBQ sauce."},
+  {id:12,week:2,day:"Thursday",name:"Enchiladas",cost:4.00,time:"25 min",servings:4,protein:"chicken",method:"oven",tags:["chicken","mealprep","kidfriendly"],ingredients:["Leftover pulled chicken","Flour tortillas","Enchilada sauce","Cheese","Sour cream"],directions:"1. Make enchilada sauce: tomato paste + broth + spices.\n2. Fill tortillas with chicken and cheese.\n3. Roll up seam-down in baking dish.\n4. Cover with sauce and more cheese.\n5. Bake 375\u00B0F for 20 minutes."},
+  {id:13,week:2,day:"Friday",name:"\"Sunday\" Chicken",cost:3.00,time:"5 min active",servings:4,protein:"chicken",method:"slow cooker",tags:["chicken","slow","mealprep","kidfriendly","glutenfree"],ingredients:["5 chicken thighs","1 can cream of chicken soup","1 packet dry Italian seasoning","4 oz cream cheese"],directions:"1. Put everything in slow cooker.\n2. Low for 6+ hours.\n3. Shred chicken and mix with creamy sauce.\n4. Serve over rice or noodles.\n\nSo easy we make it on Fridays."},
+  {id:14,week:2,day:"Saturday",name:"Nachos",cost:3.00,time:"15 min",servings:4,protein:"beef",method:"oven",tags:["beef","fast","kidfriendly","glutenfree","under30"],ingredients:["Leftover taco meat","Tortilla chips","Cheese","Jalape\u00F1os","Salsa","Sour cream"],directions:"1. Spread chips on baking sheet.\n2. Top with taco meat and cheese.\n3. Broil until cheese melts.\n4. Top with jalape\u00F1os, salsa, sour cream."},
+  {id:15,week:3,day:"Sunday",name:"Creamy Chicken Tortilla Soup",cost:4.00,time:"10 min active",servings:6,protein:"chicken",method:"slow cooker",tags:["chicken","slow","mealprep","glutenfree","kidfriendly"],ingredients:["5 chicken thighs","2 cups chicken broth","1 can black beans","1 can corn","1 can green chilis","Cream cheese","Tortilla chips"],directions:"1. Put everything except chips and cream cheese in slow cooker.\n2. High 4 hours or low 6+ hours.\n3. Shred chicken. Stir in cream cheese until melted.\n4. Serve with tortilla chips for dipping."},
+  {id:16,week:3,day:"Monday",name:"Chicken Alfredo",cost:4.00,time:"20 min",servings:4,protein:"chicken",method:"stovetop",tags:["chicken","under30","kidfriendly","highprotein"],ingredients:["3 chicken breasts","Angel hair pasta","Alfredo sauce (butter, flour, milk, parmesan)","Broccoli"],directions:"1. Boil water for pasta. Cut chicken, cook 4 min per side.\n2. Make roux for alfredo.\n3. Start noodles (5 min for angel hair).\n4. Add broccoli and alfredo to chicken pan.\n5. Serve immediately. Cold noodles are the enemy."},
+  {id:17,week:3,day:"Tuesday",name:"Spaghetti & Marinara",cost:2.50,time:"20 min",servings:4,protein:"beef",method:"stovetop",tags:["beef","kidfriendly","under30","mealprep"],ingredients:["1 lb ground beef (optional)","Spaghetti noodles","Marinara sauce","Parmesan"],directions:"1. Cook spaghetti.\n2. Brown ground beef, drain fat. Add marinara, simmer.\n3. Serve over pasta with parmesan."},
+  {id:18,week:3,day:"Wednesday",name:"Hamburger Mac",cost:3.00,time:"15 min",servings:4,protein:"beef",method:"stovetop",tags:["beef","fast","kidfriendly","under30"],ingredients:["1 lb ground beef","1 box mac and cheese","Salt, pepper"],directions:"1. Brown ground beef.\n2. Make mac and cheese per box.\n3. Mix together. Kids love this one."},
+  {id:19,week:3,day:"Thursday",name:"Slow Cooker Pork Loin",cost:4.00,time:"5 min active",servings:6,protein:"pork",method:"slow cooker",tags:["pork","slow","mealprep","glutenfree","dairyfree","highprotein"],ingredients:["Pork loin","Brown sugar","Garlic","Salt, pepper"],directions:"1. Rub pork loin with brown sugar, garlic, salt, pepper.\n2. Slow cooker 6+ hours high or 8+ low.\n3. Slice and serve with sides."},
+  {id:20,week:3,day:"Friday",name:"Your Choice Friday",cost:3.00,time:"varies",servings:4,protein:"chicken",method:"stovetop",tags:["chicken","under30"],ingredients:["Pick a protein","Pick a carb","Pick a veggie","Search online"],directions:"The EIE formula:\n1. Pick a low cost protein: chicken, beans, lentils, eggs\n2. Pick a low cost carb: rice, noodles, potatoes\n3. Pick a flavor: spices, veggies, sauce\n4. Search online \u2014 30 million results."},
+  {id:21,week:3,day:"Saturday",name:"Your Choice Saturday",cost:3.00,time:"varies",servings:4,protein:"chicken",method:"stovetop",tags:["chicken","under30"],ingredients:["Same formula \u2014 experiment!"],directions:"All food tastes good if you add:\n\u2022 Salt\n\u2022 Acid (lemon/lime/vinegar)\n\u2022 Sugar\n\u2022 Fat (butter/oil)\n\u2022 Umami (soy sauce/MSG)\n\nThe 5 cheat codes to cooking."},
+  {id:22,week:4,day:"Sunday",name:"Lentil Soup",cost:2.00,time:"15 min active",servings:6,protein:"veg",method:"stovetop",tags:["veg","vegan","mealprep","glutenfree","dairyfree","highprotein","under30"],ingredients:["2 cups lentils","8 cups chicken broth","Carrots","Onion","Celery","Garlic","Cumin, turmeric"],directions:"1. Dice onion, carrots, celery. Saut\u00E9 until translucent.\n2. Add lentils, broth, garlic, spices.\n3. Simmer 25-30 min until lentils are soft.\n4. Optional: blend half for creamy texture.\n5. Serve as-is or over noodles. Addictive."},
+  {id:23,week:4,day:"Monday",name:"Pad Thai",cost:4.00,time:"20 min",servings:4,protein:"chicken",method:"stovetop",tags:["chicken","dairyfree","glutenfree","under30","highprotein"],ingredients:["2-3 chicken breasts","12 oz rice noodles","4 eggs","Pad Thai sauce","Bean sprouts","Green onions","Peanuts"],directions:"1. Soak rice noodles (don't over-boil).\n2. Cut chicken small. Cook 4 min per side.\n3. Push to sides, scramble eggs in center.\n4. Add noodles and sauce. Fold gently.\n5. Top with peanuts, green onions, lime.\n\nWarning: too much stirring = mushy noodles."},
+  {id:24,week:4,day:"Tuesday",name:"Italian Chicken Quesadilla",cost:3.00,time:"15 min",servings:4,protein:"chicken",method:"stovetop",tags:["chicken","fast","kidfriendly","under30","highprotein"],ingredients:["2 chicken breasts","Flour tortillas","Mozzarella","Italian seasoning","Marinara for dipping"],directions:"1. Cut chicken, cook 4 min per side with Italian seasoning.\n2. Build quesadillas: tortilla, cheese, chicken, cheese, fold.\n3. Cook in hot pan until golden.\n4. Serve with marinara for dipping."},
+  {id:25,week:4,day:"Wednesday",name:"Hobo Stew",cost:3.50,time:"15 min active",servings:4,protein:"beef",method:"oven",tags:["beef","mealprep","glutenfree","dairyfree","kidfriendly"],ingredients:["1+ lb ground beef","Potatoes, cubed","Carrots","Onion","Aluminum foil","Salt, pepper, butter"],directions:"1. Make hamburger patties on foil with potatoes, carrots, onion.\n2. Season, add butter. Wrap into sealed packets.\n3. Oven 350\u00B0F for 45 min, OR slow cooker 4-6 hours."},
+  {id:26,week:4,day:"Thursday",name:"Bagel Egg & Cheese",cost:1.50,time:"8 min",servings:1,protein:"veg",method:"stovetop",tags:["veg","fast","kidfriendly","under30","highprotein"],ingredients:["1 bagel","2 eggs","1 slice cheese","Breakfast sausage (optional)"],directions:"1. Toast bagel. Fry eggs.\n2. Place cheese on egg while hot.\n3. Assemble on bagel. Done in 8 minutes."},
+  {id:27,week:4,day:"Friday",name:"Salsa Chicken Burritos",cost:3.00,time:"5 min active",servings:4,protein:"chicken",method:"slow cooker",tags:["chicken","slow","mealprep","glutenfree","kidfriendly","highprotein"],ingredients:["5 chicken thighs","1 jar salsa","Flour tortillas","Cheese","Jalape\u00F1os"],directions:"1. Chicken + salsa in slow cooker. High 4hr or low 6+.\n2. Shred chicken.\n3. Wrap in tortillas with cheese.\n4. Optional: pan-sear 2-3 min per side for crispy seal."},
+  {id:28,week:4,day:"Saturday",name:"Pork Thai Fried Rice",cost:3.50,time:"15 min",servings:4,protein:"pork",method:"stovetop",tags:["pork","mealprep","dairyfree","under30"],ingredients:["Leftover pulled pork","4 cups cooked rice","4 eggs","Soy sauce","Fish sauce","Butter","Lime"],directions:"1. Same as Thai Fried Rice but with pulled pork.\n2. No cutting needed \u2014 pork is already shredded.\n3. Cook rice, scramble eggs, toss everything.\n4. Savory and sweet."},
+  {id:29,week:0,day:"Budget",name:"Potato Soup ($1.50/day)",cost:0.75,time:"25 min",servings:4,protein:"veg",method:"stovetop",tags:["veg","budget","glutenfree","under30"],ingredients:["3 tbsp oil or butter","3 tbsp flour","2 cups milk","2 cups chicken stock","3-4 potatoes, cubed","Salt, pepper"],directions:"1. Make roux: oil/butter + flour, low-medium 5 min.\n2. Add milk, stock, potatoes, salt, pepper.\n3. Boil, then simmer 20 minutes."},
+  {id:30,week:0,day:"Budget",name:"Crepes ($1.50/day)",cost:0.50,time:"15 min",servings:4,protein:"veg",method:"stovetop",tags:["veg","budget","fast","kidfriendly","under30"],ingredients:["3 eggs","1 cup flour","1 cup milk","1 tbsp sugar","\u00BD tsp salt","PB&J, chocolate, or Nutella"],directions:"1. Mix all ingredients. Heat pan on low.\n2. Pour 1/4 mixture, rotate pan to coat.\n3. Cook ~2 min, flip, <1 min.\n4. Stuff with PB&J, chocolate, or Nutella.\n\nThese taste LUXURY."},
+  {id:31,week:0,day:"Budget",name:"Homemade Noodles ($1.50/day)",cost:0.60,time:"25 min",servings:2,protein:"veg",method:"stovetop",tags:["veg","budget","under30","vegan","dairyfree"],ingredients:["3 eggs","1 tsp salt","2 tbsp water or milk","2 cups flour"],directions:"1. Mix eggs, salt, water, flour.\n2. Roll out thin. Cut into strips.\n3. Boil ~2 minutes.\n4. Serve with broth, marinara, or alfredo.\n\nFresh noodles are life-changing."},
+  {id:32,week:0,day:"Budget",name:"Mashed Potatoes ($1.50/day)",cost:0.50,time:"30 min",servings:6,protein:"veg",method:"stovetop",tags:["veg","budget","glutenfree","dairyfree","vegan","kidfriendly"],ingredients:["4-6 potatoes","\u00BD cup milk","1+ tsp salt","Pepper"],directions:"1. Boil potatoes whole (don't peel).\n2. When fork-tender (~30 min), mash with milk and salt.\n3. Doesn't taste good? More salt, more pepper."},
+  {id:33,week:0,day:"Budget",name:"Pierogis ($1.50/day)",cost:0.75,time:"30 min",servings:4,protein:"veg",method:"stovetop",tags:["veg","budget","kidfriendly"],ingredients:["Dough: 2 eggs, 2 cups flour, \u00BD cup water, 1 tsp salt","Filling: mashed potatoes + cheese"],directions:"1. Make dough. Roll thin. Cut circles.\n2. Fill with mashed potato + cheese.\n3. Fold, seal with fork.\n4. Boil 3-4 min until they float.\n5. Optional: pan fry in butter for crispy edges."},
+  {id:34,week:0,day:"Guide",name:"5 Cooking Cheat Codes",cost:0,time:"Reference",servings:0,protein:"veg",method:"stovetop",tags:["veg"],ingredients:["Acid \u2014 Lime, Lemon, Vinegar","Salt \u2014 taste as you go","Sugar \u2014 a bit of brown sugar","Fat \u2014 Butter, oil, cream","Umami \u2014 MSG, fish sauce, soy sauce","Colors \u2014 bright veggies","Aromatics \u2014 Garlic, onion","Capsaicin (optional) \u2014 hot sauce"],directions:"Make any food taste good:\n\n1. ACID \u2014 Lime/lemon/vinegar\n2. SALT \u2014 Add slowly, taste as you go\n3. SUGAR \u2014 Just a pinch of brown sugar\n4. FAT \u2014 Butter, oil, cream\n5. UMAMI \u2014 MSG, fish sauce, soy sauce\n\nLayer across each component separately.\nPsychology trick: Name your food."}
+];
+
+var CHICKEN_IDEAS = ["Chicken Hamburger Helper","Chicken Mac & Cheese","Chicken Pesto","Chicken Shepherd's Pie","Slowcooker Chicken in Lentil Soup","Golden Curry Chicken","Stuffed Pepper Soup","Cheesy Broccoli Soup","Chicken Rice & Cheese","Fajita Chicken & Rice","Butter Chicken","Chicken Biryani","Breaded Chicken","Chicken Pot Pie","BBQ Chicken Pizza","Chicken Noodle Soup","Chicken Lettuce Wraps","Chicken & Mashed Potatoes","White Chili","Chicken Shawarma","Chicken Mole","Chicken Carbonara","Chicken Casserole","Corn Chowder w/ Chicken","Chicken & Waffles","Caesar Salad w/ Chicken"];
+
+var TIPS = [
+  {text:"Fresh food is almost always cheaper than canned, frozen, or processed. Marketing companies got away with the opposite lie for 20 years.",source:"Nutrition Per Dollar Study"},
+  {text:"Replace a $1.69 red pepper with carrots. Just as sweet, 3x the nutrition per dollar.",source:"Food Nutrition Guide"},
+  {text:"5 cheat codes to make anything delicious: Salt, Acid (lemon/lime/vinegar), Sugar, Fat (butter/oil), Umami (soy sauce/MSG).",source:"Cooking Cheat Codes"},
+  {text:"Aim for 700 calories per dollar to eat for about $1,000 a year.",source:"Calorie Per Dollar Study"},
+  {text:"Instant oats cost 5x more than regular oats. Same food, different marketing.",source:"Price Comparison"},
+  {text:"Beans and lentils: 80-140g protein per dollar, tons of fiber, incredibly cheap. The ultimate superfood.",source:"Protein Per Dollar"},
+  {text:"Greek yogurt: 16g protein per dollar. Chicken: 50g. Do the math before buying 'health food.'",source:"Protein Per Dollar"},
+  {text:"The cheapest fast food (Little Caesar's at 420 cal/$) is still 2x more expensive than cooking at home.",source:"Fast Food Comparison"},
+  {text:"Type any protein + carb + veggie into Google. There will be a recipe. Since all food tastes good, it probably will too.",source:"Cookbook Philosophy"},
+  {text:"We cycle through 28 recipes. Grocery shopping takes <15 minutes including checkout because we sorted our list by aisle.",source:"Meal Planning"},
+  {text:"Biphasic sleep (6hr night + 20min nap) saves 12 hours per week.",source:"Sleep Efficiency"},
+  {text:"Standing taller and fixing posture can be the difference between equal vs. inferior treatment.",source:"Power Dynamics"},
+  {text:"Canned chicken: 115 cal/$ and 23g prot/$. Fresh chicken: 239 cal/$ and 50g prot/$. Fresh wins 2x.",source:"Calorie Per Dollar"},
+  {text:"Before a major meeting: change your clothes, do your hair. Bizarre how differently people treat you.",source:"Power Efficiency"},
+  {text:"Spaghetti Diagram: trace your morning routine with a crayon on a floor plan. Save 10+ min daily.",source:"Time Efficiency"},
+  {text:"Put a 1-cup measuring scoop directly inside your coffee container. Saves time every morning.",source:"Time Efficiency Short"}
+];
+
+// === STATE ===
+var currentSort = "nutritionScore";
+var currentSortDir = "desc";
+var expandedFood = null;
+var currentWeek = 1;
+var currentFilter = "all";
+
+function esc(s) {
+  return String(s).replace(/&/g,"&amp;").replace(/\x3c/g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+}
+
+function init() {
+  document.getElementById("totalFoods").textContent = FOODS.length;
+  var topCal = FOODS.reduce(function(a,b){return a.calPerDollar > b.calPerDollar ? a : b;});
+  var topProt = FOODS.reduce(function(a,b){return a.protPerDollar > b.protPerDollar ? a : b;});
+  var withCost = FOODS.filter(function(f){return f.costPerYear > 0;});
+  var cheapest = withCost.length ? withCost.reduce(function(a,b){return a.costPerYear < b.costPerYear ? a : b;}) : null;
+  document.getElementById("topCalDollar").textContent = topCal.name;
+  document.getElementById("topProtDollar").textContent = topProt.name;
+  document.getElementById("cheapestYear").textContent = cheapest ? ("$" + cheapest.costPerYear.toLocaleString() + "/yr") : "\u2014";
+
+  renderFoods();
+  renderMealPlanner();
+  renderRecipes();
+  renderBudget();
+  renderTips();
+  setupEvents();
+}
+
+function doSort(foods, key, dir) {
+  var mult = dir === "asc" ? 1 : -1;
+  foods.sort(function(a, b) {
+    var av = a[key] || 0;
+    var bv = b[key] || 0;
+    if (key === "costPerYear") {
+      if (av === 0) av = 999999;
+      if (bv === 0) bv = 999999;
+    }
+    return (av - bv) * mult;
+  });
+  return foods;
+}
+
+function renderFoods() {
+  var search = (document.getElementById("foodSearch").value || "").toLowerCase();
+  var foods = FOODS.slice();
+  if (search) {
+    foods = foods.filter(function(f) { return f.name.toLowerCase().indexOf(search) >= 0; });
+  }
+  doSort(foods, currentSort, currentSortDir);
+
+  var html = "";
+  for (var i = 0; i < foods.length; i++) {
+    var f = foods[i];
+    var displayRank = i + 1;
+    var tier = displayRank <= 10 ? "tier-1" : displayRank <= 25 ? "tier-2" : displayRank <= 50 ? "tier-3" : "tier-4";
+    html += '<tr onclick="toggleExpand(' + f.id + ')" class="' + tier + '">';
+    html += '<td class="rank-cell">' + displayRank + '\x3c/td>';
+    html += '<td class="name-cell">' + esc(f.name) + '\x3c/td>';
+    html += '<td>$' + (typeof f.price === "number" ? f.price.toFixed(2) : "?") + '\x3c/td>';
+    html += '<td class="val">' + (f.calPerDollar || 0).toLocaleString() + '\x3c/td>';
+    html += '<td class="val">' + f.protPerDollar + 'g\x3c/td>';
+    html += '<td class="val">' + (f.nutritionScore || "\u2014") + '\x3c/td>';
+    html += '<td class="val">' + (f.costPerYear ? "$" + f.costPerYear.toLocaleString() : "\u2014") + '\x3c/td>';
+    html += '\x3c/tr>';
+    var isOpen = expandedFood === f.id;
+    html += '<tr class="expand-row ' + (isOpen ? "open" : "") + '"><td colspan="7"><div class="expand-content">';
+    html += '<h3 style="color:var(--accent);margin-bottom:0.75rem">' + esc(f.name) + ' \u2014 Nutrient Breakdown\x3c/h3>';
+    html += '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:0.5rem;margin-bottom:0.75rem">';
+    html += statBox("Cal/$", (f.calPerDollar||0).toLocaleString());
+    html += statBox("Protein/$", f.protPerDollar + "g");
+    html += statBox("Fiber/$", f.fiberPerDollar + "g");
+    html += statBox("Calcium/$", f.calciumPerDollar + "mg");
+    html += statBox("Iron/$", f.ironPerDollar + "mg");
+    html += statBox("Vit C/$", f.vitCPerDollar + "mg");
+    html += '\x3c/div>';
+    if (f.ratios) {
+      var rMap = [["calories","Calories","cal"],["protein","Protein","prot"],["fiber","Fiber","fib"],["calcium","Calcium","calc"],["iron","Iron","iron"],["vitC","Vit C","vitc"],["vitA","Vit A","vita"]];
+      html += '<div class="bar-chart">';
+      for (var j = 0; j < rMap.length; j++) {
+        var v = (f.ratios[rMap[j][0]] || 0);
+        var pct = Math.round(v * 100);
+        html += '<div class="bar-row"><div class="bar-label">' + rMap[j][1] + '\x3c/div><div class="bar-track"><div class="bar-fill ' + rMap[j][2] + '" style="width:' + Math.max(pct,2) + '%">' + (pct > 8 ? pct + "%" : "") + '\x3c/div>\x3c/div>\x3c/div>';
+      }
+      html += '\x3c/div>';
+    }
+    html += '\x3c/div>\x3c/td>\x3c/tr>';
+  }
+  document.getElementById("foodBody").innerHTML = html;
+}
+
+function statBox(label, value) {
+  return '<div style="background:var(--bg3);padding:0.6rem;border-radius:6px;text-align:center"><div style="font-size:1.1rem;font-weight:700;color:var(--accent)">' + value + '\x3c/div><div style="font-size:0.7rem;color:var(--text-light);text-transform:uppercase;letter-spacing:0.3px">' + label + '\x3c/div>\x3c/div>';
+}
+
+function toggleExpand(id) {
+  expandedFood = expandedFood === id ? null : id;
+  renderFoods();
+}
+
+function renderMealPlanner() {
+  var tabs = document.getElementById("weekTabs");
+  var h = "";
+  for (var w = 1; w <= 4; w++) {
+    h += '<button class="week-tab ' + (w === currentWeek ? "active" : "") + '" onclick="setWeek(' + w + ')">Week ' + w + '\x3c/button>';
+  }
+  tabs.innerHTML = h;
+  var weekR = RECIPES.filter(function(r){return r.week === currentWeek;});
+  var c = '<div class="week-grid">';
+  for (var i = 0; i < weekR.length; i++) {
+    var r = weekR[i];
+    c += '<div class="day-card" onclick="showRecipe(' + r.id + ')"><div class="day-name">' + r.day + '\x3c/div><div class="meal-name">' + esc(r.name) + '\x3c/div><div class="meal-meta">' + r.time + ' \u00B7 ' + r.servings + ' servings\x3c/div><div class="meal-cost">~$' + r.cost.toFixed(2) + '\x3c/div>\x3c/div>';
+  }
+  c += '\x3c/div>';
+  document.getElementById("weekContent").innerHTML = c;
+}
+
+function setWeek(w) { currentWeek = w; renderMealPlanner(); }
+
+function renderRecipes() {
+  var filtered = RECIPES.slice();
+  if (currentFilter !== "all") {
+    filtered = filtered.filter(function(r) {
+      if (currentFilter === "veg") return r.protein === "veg";
+      if (currentFilter === "under3") return r.cost > 0 && r.cost <= 3;
+      return r.tags.indexOf(currentFilter) >= 0 || r.protein === currentFilter;
+    });
+  }
+  var h = "";
+  for (var i = 0; i < filtered.length; i++) {
+    var r = filtered[i];
+    // Show only the most useful tags on cards (not all internal filter tags)
+    var displayTags = ["chicken","beef","pork","veg","vegan","slow","fast","budget","glutenfree","dairyfree","kidfriendly","highprotein","mealprep"];
+    var tagLabels = {chicken:"Chicken",beef:"Beef",pork:"Pork",veg:"Vegetarian",vegan:"Vegan",slow:"Slow Cooker",fast:"Quick",budget:"Budget",glutenfree:"GF",dairyfree:"DF",kidfriendly:"Kid Friendly",highprotein:"High Protein",mealprep:"Meal Prep",under30:"<30 min",under3:"Under $3"};
+    var tagH = "";
+    for (var j = 0; j < r.tags.length; j++) {
+      var t = r.tags[j];
+      if (displayTags.indexOf(t) >= 0) tagH += '<span class="tag ' + t + '">' + (tagLabels[t] || t) + '\x3c/span>';
+    }
+    h += '<div class="recipe-card" onclick="showRecipe(' + r.id + ')"><div class="recipe-title">' + esc(r.name) + '\x3c/div><div class="recipe-tags">' + tagH + '\x3c/div><div style="font-size:0.85rem;color:var(--text-light)">' + r.time + ' \u00B7 ' + r.servings + ' servings \u00B7 <span style="color:var(--accent);font-weight:700">~$' + r.cost.toFixed(2) + '\x3c/span>\x3c/div>\x3c/div>';
+  }
+  if (currentFilter === "all" || currentFilter === "chicken") {
+    h += '<div style="grid-column:1/-1;margin-top:1.5rem"><h3 style="color:var(--text-dark)">\uD83D\uDCA1 32+ Chicken Replacement Ideas\x3c/h3><div style="display:flex;flex-wrap:wrap;gap:0.5rem;margin-top:0.75rem">';
+    for (var k = 0; k < CHICKEN_IDEAS.length; k++) h += '<span class="tag chicken" style="font-size:0.85rem;padding:0.4rem 0.8rem;cursor:default">' + CHICKEN_IDEAS[k] + '\x3c/span>';
+    h += '\x3c/div><p style="color:var(--text-light);font-size:0.8rem;margin-top:0.5rem">Search any of these online or ask AI.\x3c/p>\x3c/div>';
+  }
+  document.getElementById("recipeGrid").innerHTML = h;
+}
+
+function showRecipe(id) {
+  var r = null;
+  for (var i = 0; i < RECIPES.length; i++) { if (RECIPES[i].id === id) { r = RECIPES[i]; break; } }
+  if (!r) return;
+  var ing = "";
+  for (var j = 0; j < r.ingredients.length; j++) ing += "<li>" + esc(r.ingredients[j]) + "\x3c/li>";
+  var dirs = r.directions.split("\n");
+  var dirH = "";
+  for (var k = 0; k < dirs.length; k++) { if (dirs[k].trim()) dirH += "<p>" + esc(dirs[k]) + "\x3c/p>"; }
+  document.getElementById("modalContent").innerHTML = '<h3>' + esc(r.name) + '\x3c/h3><div style="display:flex;gap:0.75rem;margin-bottom:1.25rem;flex-wrap:wrap"><span class="tag veg">' + r.time + '\x3c/span><span class="tag veg">' + r.servings + ' servings\x3c/span>' + (r.cost ? '<span class="tag budget">~$' + r.cost.toFixed(2) + '\x3c/span>' : '') + '\x3c/div><h3 style="font-size:0.95rem">Ingredients\x3c/h3><ul class="ingredients">' + ing + '\x3c/ul><h3 style="font-size:0.95rem">Directions\x3c/h3><div class="directions">' + dirH + '\x3c/div>';
+  document.getElementById("modal").classList.add("open");
+}
+
+function closeModal() { document.getElementById("modal").classList.remove("open"); }
+
+function renderBudget() {
+  var budget = parseInt(document.getElementById("budgetSlider").value);
+  var people = parseInt(document.getElementById("peopleSlider").value);
+  var diet = document.getElementById("dietSelect").value;
+  document.getElementById("budgetDisplay").textContent = "$" + budget;
+  document.getElementById("peopleDisplay").textContent = people;
+  var perPerson = Math.round(budget / people);
+  document.getElementById("yourCost").textContent = "$" + perPerson + "/wk";
+  var rec = FOODS.filter(function(f){return f.calPerDollar > 0;});
+  if (diet === "protein") rec.sort(function(a,b){return b.protPerDollar - a.protPerDollar;});
+  else if (diet === "vegetarian") {
+    var vegItems = ["flour","milk","eggs","pinto beans","lentils","oats","rice","bread","peanut butter","pasta","bagels","banana","potatoes","carrots","kale","spinach"];
+    rec = rec.filter(function(f){var n=f.name.toLowerCase();return vegItems.some(function(v){return n.indexOf(v)>=0;});});
+    rec.sort(function(a,b){return (b.nutritionScore||0) - (a.nutritionScore||0);});
+  } else rec.sort(function(a,b){return (b.nutritionScore||0) - (a.nutritionScore||0);});
+  var top = rec.slice(0, 15);
+  var h = "";
+  for (var i = 0; i < top.length; i++) {
+    h += '<div class="grocery-item"><span style="font-weight:600">' + esc(top[i].name) + '\x3c/span><span style="color:var(--accent);font-weight:600">' + top[i].calPerDollar.toLocaleString() + ' cal/$ \u00B7 ' + top[i].protPerDollar + 'g prot/$\x3c/span>\x3c/div>';
+  }
+  h += '<div style="margin-top:1rem;padding-top:0.75rem;border-top:2px solid var(--accent);font-size:0.9rem">Daily budget per person: <strong style="color:var(--accent)">$' + (perPerson/7).toFixed(2) + '\x3c/strong> \u2014 At 700 cal/$, that\'s <strong style="color:var(--accent)">' + Math.round(perPerson/7*700).toLocaleString() + ' calories/day\x3c/strong>.\x3c/div>';
+  document.getElementById("groceryItems").innerHTML = h;
+}
+
+function renderTips() {
+  var h = "";
+  for (var i = 0; i < TIPS.length; i++) {
+    h += '<div class="tip-card"><div class="tip-text">' + esc(TIPS[i].text) + '\x3c/div><div class="tip-source">\u2014 ' + esc(TIPS[i].source) + '\x3c/div>\x3c/div>';
+  }
+  document.getElementById("tipsGrid").innerHTML = h;
+}
+
+function setupEvents() {
+  // Tab nav
+  var navBtns = document.querySelectorAll(".nav-btn");
+  for (var i = 0; i < navBtns.length; i++) {
+    (function(btn) {
+      btn.addEventListener("click", function() {
+        for (var j = 0; j < navBtns.length; j++) navBtns[j].classList.remove("active");
+        var sections = document.querySelectorAll(".section");
+        for (var j = 0; j < sections.length; j++) sections[j].classList.remove("active");
+        btn.classList.add("active");
+        document.getElementById(btn.dataset.tab).classList.add("active");
+      });
+    })(navBtns[i]);
+  }
+
+  // Sort buttons
+  var sortBtns = document.querySelectorAll(".sort-btn");
+  for (var i = 0; i < sortBtns.length; i++) {
+    (function(btn) {
+      btn.addEventListener("click", function() {
+        var key = btn.dataset.sort;
+        if (currentSort === key) {
+          currentSortDir = currentSortDir === "desc" ? "asc" : "desc";
+        } else {
+          currentSort = key;
+          currentSortDir = key === "costPerYear" ? "asc" : "desc";
+        }
+        for (var j = 0; j < sortBtns.length; j++) {
+          sortBtns[j].classList.remove("active");
+          var t = sortBtns[j].textContent.replace(/ [\u2191\u2193\u2195]+$/, "").replace(/ [↑↓]+$/, "");
+          var defDir = sortBtns[j].dataset.sort === "costPerYear" ? " \u2191" : " \u2193";
+          sortBtns[j].textContent = t + defDir;
+        }
+        btn.classList.add("active");
+        var arrow = currentSortDir === "asc" ? " \u2191" : " \u2193";
+        btn.textContent = btn.textContent.replace(/ [\u2191\u2193\u2195]+$/, "").replace(/ [↑↓]+$/, "") + arrow;
+        expandedFood = null;
+        renderFoods();
+      });
+    })(sortBtns[i]);
+  }
+
+  // Column header clicks
+  var ths = document.querySelectorAll(".food-table th[data-col]");
+  for (var i = 0; i < ths.length; i++) {
+    (function(th) {
+      th.addEventListener("click", function() {
+        var col = th.dataset.col;
+        if (currentSort === col) {
+          currentSortDir = currentSortDir === "desc" ? "asc" : "desc";
+        } else {
+          currentSort = col;
+          currentSortDir = (col === "costPerYear" || col === "price") ? "asc" : "desc";
+        }
+        expandedFood = null;
+        for (var j = 0; j < sortBtns.length; j++) sortBtns[j].classList.remove("active");
+        var match = document.querySelector('.sort-btn[data-sort="' + currentSort + '"]');
+        if (match) match.classList.add("active");
+        renderFoods();
+      });
+    })(ths[i]);
+  }
+
+  // Search
+  document.getElementById("foodSearch").addEventListener("input", function() { expandedFood = null; renderFoods(); });
+
+  // Budget
+  document.getElementById("budgetSlider").addEventListener("input", renderBudget);
+  document.getElementById("peopleSlider").addEventListener("input", renderBudget);
+  document.getElementById("dietSelect").addEventListener("change", renderBudget);
+
+  // Recipe filters
+  var filterBtns = document.querySelectorAll("#recipeFilters .filter-btn");
+  for (var i = 0; i < filterBtns.length; i++) {
+    (function(btn) {
+      btn.addEventListener("click", function() {
+        for (var j = 0; j < filterBtns.length; j++) filterBtns[j].classList.remove("active");
+        btn.classList.add("active");
+        currentFilter = btn.dataset.filter;
+        renderRecipes();
+      });
+    })(filterBtns[i]);
+  }
+
+  // Modal
+  document.getElementById("modal").addEventListener("click", function(e) { if (e.target === document.getElementById("modal")) closeModal(); });
+  document.getElementById("modalClose").addEventListener("click", closeModal);
+  document.addEventListener("keydown", function(e) { if (e.key === "Escape") closeModal(); });
+
+  // Theme
+  document.getElementById("themeBtn").addEventListener("click", function() {
+    document.body.classList.toggle("dark");
+    this.textContent = document.body.classList.contains("dark") ? "\u2600\uFE0F Light Mode" : "\uD83C\uDF19 Dark Mode";
+  });
+
+  // Surprise
+  document.getElementById("surpriseBtn").addEventListener("click", function() {
+    var r = RECIPES[Math.floor(Math.random() * RECIPES.length)];
+    showRecipe(r.id);
+  });
+}
+
+init();
+
+</script>
+</body>
+</html>

@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EIE Food Lab — Efficiency Is Everything</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Narrow:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>/*__CSS__*/</style>
+</head>
+<body>
+<nav class="nav"><div class="nav-inner">
+  <div class="nav-brand"><span>Efficiency</span> Is Everything</div>
+  <button class="nav-btn active" data-tab="rankings">Rankings</button>
+  <button class="nav-btn" data-tab="planner">Meal Planner</button>
+  <button class="nav-btn" data-tab="recipes">Recipes</button>
+  <button class="nav-btn" data-tab="budget">Budget Calc</button>
+  <button class="nav-btn" data-tab="tips">Quick Tips</button>
+  <div class="nav-right"><button class="theme-toggle" id="themeBtn">🌙 Dark Mode</button></div>
+</div></nav>
+<div class="section active" id="rankings">
+  <h2>Food <span>Rankings</span></h2>
+  <div class="hero-stats">
+    <div class="stat-card"><div class="num" id="totalFoods">0</div><div class="label">Foods Analyzed</div></div>
+    <div class="stat-card"><div class="num" id="topCalDollar">—</div><div class="label">Best Cal/$</div></div>
+    <div class="stat-card"><div class="num" id="topProtDollar">—</div><div class="label">Best Protein/$</div></div>
+    <div class="stat-card"><div class="num" id="cheapestYear">—</div><div class="label">Cheapest Annual Diet</div></div>
+  </div>
+  <div class="search-bar">
+    <input type="text" id="foodSearch" placeholder="Search foods... (e.g. chicken, beans, milk)">
+    <div class="sort-btns">
+      <button class="sort-btn active" data-sort="nutritionScore">Nutrition Score ↓</button>
+      <button class="sort-btn" data-sort="calPerDollar">Cal/$ ↓</button>
+      <button class="sort-btn" data-sort="protPerDollar">Protein/$ ↓</button>
+      <button class="sort-btn" data-sort="costPerYear">Annual Cost ↑</button>
+    </div>
+  </div>
+  <div style="overflow-x:auto">
+  <table class="food-table">
+    <thead><tr>
+      <th>#</th><th>Food</th><th data-col="price">Price</th><th data-col="calPerDollar">Cal/$</th><th data-col="protPerDollar">Prot/$</th><th data-col="nutritionScore">Score</th><th data-col="costPerYear">$/Year</th>
+    </tr></thead>
+    <tbody id="foodBody"></tbody>
+  </table>
+  </div>
+</div>
+<div class="section" id="planner">
+  <h2>4-Week <span>Meal Rotation</span></h2>
+  <p style="color:var(--text-light);margin-bottom:1rem">28 recipes from the Efficiency Is Everything Cookbook. Click any meal for the full recipe.</p>
+  <div class="week-tabs" id="weekTabs"></div>
+  <div id="weekContent"></div>
+  <div style="margin-top:1rem;padding:1rem;background:var(--white);border:1px solid var(--border);border-radius:8px">
+    <span style="color:var(--text)">Estimated weekly cost (2 people): </span>
+    <span style="color:var(--accent);font-weight:700;font-size:1.3rem" id="weekCost">~$24</span>
+  </div>
+</div>
+<div class="section" id="recipes">
+  <h2>Recipe <span>Collection</span></h2>
+  <button class="surprise-btn" id="surpriseBtn">🎲 Surprise Me</button>
+  <div class="filter-bar" id="recipeFilters">
+    <button class="filter-btn active" data-filter="all">All</button>
+    <button class="filter-btn" data-filter="chicken">🐔 Chicken</button>
+    <button class="filter-btn" data-filter="beef">🥩 Beef</button>
+    <button class="filter-btn" data-filter="pork">🐷 Pork</button>
+    <button class="filter-btn" data-filter="veg">🥬 Vegetarian</button>
+    <button class="filter-btn" data-filter="vegan">🌱 Vegan</button>
+    <button class="filter-btn" data-filter="glutenfree">🚫🌾 Gluten-Free</button>
+    <button class="filter-btn" data-filter="dairyfree">🚫🥛 Dairy-Free</button>
+    <button class="filter-btn" data-filter="slow">⏱️ Slow Cooker</button>
+    <button class="filter-btn" data-filter="fast">⚡ Under 15 min</button>
+    <button class="filter-btn" data-filter="under30">🕐 Under 30 min</button>
+    <button class="filter-btn" data-filter="mealprep">📦 Meal Prep</button>
+    <button class="filter-btn" data-filter="kidfriendly">👶 Kid Friendly</button>
+    <button class="filter-btn" data-filter="highprotein">💪 High Protein</button>
+    <button class="filter-btn" data-filter="budget">💰 $1.50/day</button>
+    <button class="filter-btn" data-filter="under3">💲 Under $3</button>
+  </div>
+  <div class="recipe-grid" id="recipeGrid"></div>
+</div>
+<div class="section" id="budget">
+  <h2>Budget <span>Calculator</span></h2>
+  <div class="budget-controls">
+    <div class="control-group">
+      <label>Weekly Food Budget: <span class="budget-output" id="budgetDisplay">$50</span></label>
+      <input type="range" id="budgetSlider" min="10" max="200" value="50" step="5">
+    </div>
+    <div class="control-group">
+      <label>Number of People: <span class="budget-output" id="peopleDisplay">2</span></label>
+      <input type="range" id="peopleSlider" min="1" max="8" value="2">
+    </div>
+    <div class="control-group">
+      <label>Dietary Focus:</label>
+      <select id="dietSelect">
+        <option value="standard">Standard (balanced)</option>
+        <option value="protein">High Protein</option>
+        <option value="vegetarian">Vegetarian</option>
+      </select>
+    </div>
+  </div>
+  <div class="budget-comparison">
+    <div><div style="font-size:2rem;font-weight:800;color:var(--accent)" id="yourCost">$25/wk</div><div style="font-size:0.85rem;color:var(--text-light)">Your Plan (per person)</div></div>
+    <div class="vs">VS</div>
+    <div><div style="font-size:2rem;font-weight:800;color:var(--red)">$75/wk</div><div style="font-size:0.85rem;color:var(--text-light)">Average American</div></div>
+  </div>
+  <div class="grocery-list">
+    <h3>Recommended Foods <span style="color:var(--accent)">For Your Budget</span></h3>
+    <div id="groceryItems"></div>
+  </div>
+</div>
+<div class="section" id="tips">
+  <h2>Efficiency <span>Tips</span></h2>
+  <div class="tips-grid" id="tipsGrid"></div>
+</div>
+<div class="modal-overlay" id="modal">
+  <div class="modal">
+    <button class="modal-close" id="modalClose">&times;</button>
+    <div id="modalContent"></div>
+  </div>
+</div>
+<footer>
+  Data from <a href="https://efficiencyiseverything.com" target="_blank">Efficiency Is Everything</a> by Michael Kirk<br>
+  Industrial Engineering Applied to Life — Save Time, Save Money, Live Better
+</footer>
+<script>
+/*__FOODS_DATA__*/
+/*__APP_JS__*/
+</script>
+</body>
+</html>
