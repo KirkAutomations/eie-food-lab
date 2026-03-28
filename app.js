@@ -354,22 +354,6 @@ function setupEvents() {
   });
 }
 
-function showBookViewer(book) {
-  var viewer = document.getElementById("bookViewer");
-  var frame = document.getElementById("bookFrame");
-  var title = document.getElementById("bookViewerTitle");
-  if (book === "cookbook") {
-    title.textContent = "EIE — In Cooking (The Cookbook V1.52)";
-    frame.src = "data/The-Cookbook-v1.4.pdf";
-  } else if (book === "budget") {
-    title.textContent = "EIE — $1.59 Perfect Eating";
-    frame.src = "data/The-Cookbook-v1.4.pdf";
-  } else if (book === "speed") {
-    title.textContent = "EIE — Speed Cooking V0.98";
-    frame.src = "data/Speed-Cooking-v0.98.pdf";
-  }
-  viewer.style.display = "block";
-  viewer.scrollIntoView({behavior:"smooth"});
-}
+
 
 init();
